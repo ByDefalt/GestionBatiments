@@ -3,6 +3,8 @@ package Defalt.Batiments.Facade;
 import Defalt.Batiments.BatimentsMetiers.Batiment;
 import Defalt.Batiments.Factory.BatimentFactory;
 import Defalt.Batiments.Factory.BatimentFactoryJson;
+import Defalt.Batiments.Observer.Observable;
+import Defalt.Batiments.Observer.Observer;
 import Defalt.Batiments.Verificateur.VerificateurBatiment;
 import Defalt.Batiments.Visiteur.Visiteur;
 
@@ -15,7 +17,7 @@ import java.util.Objects;
  * Classe représentant un campus contenant plusieurs bâtiments.
  * Fournit des fonctionnalités pour créer, gérer, et vérifier les bâtiments.
  */
-public class Campus {
+public class Campus implements Observable {
 
     /**
      * Nom du campus.
@@ -36,6 +38,8 @@ public class Campus {
      * Liste des bâtiments du campus.
      */
     private List<Batiment> batiments;
+
+    private List<Observer> observers = new ArrayList<>();
 
     /**
      * Constructeur du campus.
@@ -105,6 +109,7 @@ public class Campus {
         if (batiment == null) return false;
 
         batiments.add(batiment);
+        notifyObservers();
         return true;
     }
 
@@ -115,7 +120,15 @@ public class Campus {
      * @return {@code true} si le bâtiment a été supprimé, {@code false} sinon.
      */
     public boolean destroyBatiment(String nom) {
-        return batiments.removeIf(i -> i.getNom().equals(nom));
+        return batiments.stream()
+                .filter(i -> i.getNom().equals(nom))
+                .findFirst()
+                .map(batiment -> {
+                    batiments.remove(batiment);
+                    notifyObservers();
+                    return true;
+                })
+                .orElse(false);
     }
 
     /**
@@ -131,6 +144,7 @@ public class Campus {
                 .findFirst()
                 .map(batiment -> {
                     batiment.setNom(newNom);
+                    notifyObservers();
                     return true;
                 })
                 .orElse(false);
@@ -157,6 +171,7 @@ public class Campus {
                 .findFirst()
                 .map(piece1 -> {
                     piece1.setEstBureau(!piece1.isEstBureau());
+                    notifyObservers();
                     return true;
                 })
                 .orElse(false);
@@ -206,6 +221,7 @@ public class Campus {
         VerificateurBatiment verifier = new VerificateurBatiment();
         if (imported != null && imported.stream().allMatch(b -> verifier.verifBatiment(b, startOne))) {
             this.batiments = imported;
+            notifyObservers();
         }
 
         return imported;
@@ -219,6 +235,23 @@ public class Campus {
     public void afficherCaracteristiques(Visiteur visiteur) {
         for (Batiment batiment : batiments) {
             batiment.accept(visiteur);
+        }
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update();
         }
     }
 
@@ -256,5 +289,13 @@ public class Campus {
         return "Campus{" +
                 "nom='" + nom + '\'' +
                 '}';
+    }
+
+    public List<Observer> getObservers() {
+        return observers;
+    }
+
+    public void setObservers(List<Observer> observers) {
+        this.observers = observers;
     }
 }
