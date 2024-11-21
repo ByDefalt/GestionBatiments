@@ -2,6 +2,7 @@ package Defalt.Batiments.BatimentsMetiers;
 
 import Defalt.Batiments.Visiteur.Visitable;
 import Defalt.Batiments.Visiteur.Visiteur;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +13,6 @@ import java.util.Objects;
  * Cette classe est visitable via le pattern Visiteur.
  */
 public class Batiment implements Visitable {
-    /** Identifiant statique auto-incrémenté pour chaque instance de bâtiment. */
-    private static int id = 0;
-
-    /** Numéro unique du bâtiment. */
-    private int numero;
 
     /** Nom du bâtiment. */
     private String nom;
@@ -42,28 +38,10 @@ public class Batiment implements Visitable {
      * @param usage L'usage du bâtiment.
      */
     public Batiment(String nom, String usage) {
-        this.numero = id;
         this.nom = nom;
         this.usage = usage;
         this.etages = new ArrayList<>();
         this.pieces = new ArrayList<>();
-        id++;
-    }
-
-    /**
-     * Obtient le numéro unique du bâtiment.
-     * @return Le numéro du bâtiment.
-     */
-    public int getNumero() {
-        return numero;
-    }
-
-    /**
-     * Définit le numéro unique du bâtiment.
-     * @param numero Le numéro du bâtiment.
-     */
-    public void setNumero(int numero) {
-        this.numero = numero;
     }
 
     /**
@@ -160,11 +138,7 @@ public class Batiment implements Visitable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Batiment batiment = (Batiment) o;
-        return numero == batiment.numero &&
-                Objects.equals(nom, batiment.nom) &&
-                Objects.equals(usage, batiment.usage) &&
-                Objects.equals(etages, batiment.etages) &&
-                Objects.equals(pieces, batiment.pieces);
+        return nom.equals(batiment.nom);
     }
 
     /**
@@ -173,7 +147,7 @@ public class Batiment implements Visitable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(numero, nom, usage, etages, pieces);
+        return Objects.hash(nom, usage, etages, pieces);
     }
 
     /**
@@ -183,7 +157,6 @@ public class Batiment implements Visitable {
     @Override
     public String toString() {
         return "Batiment{" +
-                "numero=" + numero +
                 ", nom='" + nom + '\'' +
                 ", usage='" + usage + '\'' +
                 ", etages=" + etages +

@@ -2,6 +2,7 @@ package Defalt.Batiments.Vue;
 
 import Defalt.Batiments.Facade.Campus;
 import Defalt.Batiments.Observer.Observer;
+import Defalt.Batiments.Verificateur.ProblemeBatiment;
 import Defalt.Batiments.Verificateur.VerificateurBatiment;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class VueListeBatiments implements Observer {
         campus.notifyObservers();
     }
 
-    public boolean verifierBatiment() {
+    public List<List<ProblemeBatiment>> verifierBatiment() {
         return campus.verifBatiments();
     }
 }

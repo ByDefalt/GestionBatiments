@@ -4,8 +4,7 @@ import Defalt.Batiments.BatimentsMetiers.Batiment;
 import Defalt.Batiments.BatimentsMetiers.Etage;
 import Defalt.Batiments.BatimentsMetiers.Piece;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -14,73 +13,57 @@ import java.util.concurrent.atomic.AtomicInteger;
  * par rapport à un ordre séquentiel attendu.
  */
 public class VerificateurBatiment {
-
-    /**
-     * Liste des étages présentant des problèmes de numérotation.
-     */
-    private List<Etage> etagesProblemes;
-
-    /**
-     * Liste des pièces présentant des problèmes de numérotation.
-     */
-    private List<Piece> piecesProblemes;
-
-    /**
-     * Constructeur par défaut initialisant les listes de problèmes.
-     */
-    public VerificateurBatiment() {
-        this.etagesProblemes = new ArrayList<>();
-        this.piecesProblemes = new ArrayList<>();
-    }
-
-    /**
-     * Récupère la liste des étages ayant des problèmes de numérotation.
-     *
-     * @return Une liste d'objets {@link Etage} avec des problèmes.
-     */
-    public List<Etage> getEtagesProblemes() {
-        return etagesProblemes;
-    }
-
-    /**
-     * Récupère la liste des pièces ayant des problèmes de numérotation.
-     *
-     * @return Une liste d'objets {@link Piece} avec des problèmes.
-     */
-    public List<Piece> getPiecesProblemes() {
-        return piecesProblemes;
-    }
-
     /**
      * Vérifie si les numérotations des étages et des pièces d'un bâtiment sont correctes.
-     *
+     * <p>
      * Les numéros doivent suivre une séquence croissante à partir de 0 ou 1, selon le paramètre `startOne`.
      *
      * @param bat      Le bâtiment à vérifier.
      * @param startOne Indique si la numérotation commence à 1 (true) ou à 0 (false).
      * @return {@code true} si toutes les numérotations sont correctes, {@code false} sinon.
      */
-    public boolean verifBatiment(Batiment bat, boolean startOne) {
+    public Map<String,List<ProblemeBatiment>> verifBatiment(Batiment bat, boolean startOne) {
+        Map<String,List<ProblemeBatiment>> mapProblemes = new HashMap<>();
+        List<ProblemeBatiment> problemes = new ArrayList<>();
         if (bat == null) {
-            return false;
+            return null;
         }
-
-        etagesProblemes = new ArrayList<>();
-        piecesProblemes = new ArrayList<>();
-
+        if(bat.getNom()!=null && bat.getNom().isEmpty()){
+            problemes.add(ProblemeBatiment.NOM);
+        }
+        if(bat.getUsage()!=null && bat.getUsage().isEmpty()){
+            problemes.add(ProblemeBatiment.USAGE.withDetails(new ArrayList<>(),new ArrayList<>()));
+        }
         AtomicInteger piecenb = new AtomicInteger(startOne ? 1 : 0);
         AtomicInteger etagenb = new AtomicInteger(startOne ? 1 : 0);
 
-        etagesProblemes = bat.getEtages()
+        List<Integer> etagesProblemes = bat.getEtages()
                 .stream()
-                .filter(etage -> etage.getNumero() != etagenb.getAndIncrement())
+                .filter(Objects::nonNull)
+                .map(Etage::getNumero)
+                .filter(numero -> numero != etagenb.getAndIncrement())
                 .toList();
 
-        piecesProblemes = bat.getPieces()
+        List<Integer> piecesProblemes = bat.getPieces()
                 .stream()
-                .filter(piece -> piece.getNumero() != piecenb.getAndIncrement())
+                .filter(Objects::nonNull)
+                .map(Piece::getNumero)
+                .filter(numero -> numero != piecenb.getAndIncrement())
                 .toList();
 
-        return etagesProblemes.isEmpty() && piecesProblemes.isEmpty();
+        if(!etagesProblemes.isEmpty() && !piecesProblemes.isEmpty()){
+            problemes.add(ProblemeBatiment.ETAGE_ET_PIECE.withDetails(etagesProblemes, piecesProblemes));
+        }
+        if(!etagesProblemes.isEmpty()){
+            problemes.add(ProblemeBatiment.ETAGES.withDetails(etagesProblemes, new ArrayList<>()));
+        }
+        if(!piecesProblemes.isEmpty()){
+            problemes.add(ProblemeBatiment.PIECES.withDetails(new ArrayList<>(), piecesProblemes));
+        }
+        if(problemes.isEmpty()){
+            problemes.add(ProblemeBatiment.AUCUN.withDetails(new ArrayList<>(),new ArrayList<>()));
+        }
+        mapProblemes.put(bat.getNom(),problemes);
+        return mapProblemes;
     }
 }

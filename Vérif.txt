@@ -1,0 +1,15 @@
+Notée :
+
+Test
+Qualité du code/ Lisibilité
+Nommage des variables
+répondre au question
+
++
+
+modifier verification
+modifier id/json
+
++
+
+Test main

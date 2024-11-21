@@ -5,13 +5,13 @@ import Defalt.Batiments.Factory.BatimentFactory;
 import Defalt.Batiments.Factory.BatimentFactoryJson;
 import Defalt.Batiments.Observer.Observable;
 import Defalt.Batiments.Observer.Observer;
+import Defalt.Batiments.Verificateur.ProblemeBatiment;
 import Defalt.Batiments.Verificateur.VerificateurBatiment;
 import Defalt.Batiments.Visiteur.Visiteur;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Classe représentant un campus contenant plusieurs bâtiments.
@@ -154,11 +154,11 @@ public class Campus implements Observable {
      * Met à jour l'état "bureau" d'une pièce spécifique.
      *
      * @param nom   Nom du bâtiment contenant la pièce.
-     * @param etage Numéro de l'étage.
-     * @param piece Numéro de la pièce.
+     * @param numEtage Numéro de l'étage.
+     * @param numPiece Numéro de la pièce.
      * @return {@code true} si la mise à jour a réussi, {@code false} sinon.
      */
-    public boolean updatePieceEstBureau(String nom, int etage, int piece) {
+    public boolean updatePieceEstBureau(String nom, int numEtage, int numPiece) {
         Batiment batiment = batiments.stream()
                 .filter(i -> i.getNom().equals(nom))
                 .findFirst()
@@ -167,7 +167,7 @@ public class Campus implements Observable {
         if (batiment == null) return false;
 
         return batiment.getPieces().stream()
-                .filter(i -> i.getEtage().getNumero() == etage && i.getNumero() == piece)
+                .filter(i -> i.getEtage().getNumero() == numEtage && i.getNumero() == numPiece)
                 .findFirst()
                 .map(piece1 -> {
                     piece1.setEstBureau(!piece1.isEstBureau());
@@ -182,9 +182,9 @@ public class Campus implements Observable {
      *
      * @return {@code true} si tous les bâtiments sont valides, {@code false} sinon.
      */
-    public boolean verifBatiments() {
+    public List<List<ProblemeBatiment>> verifBatiments() {
         VerificateurBatiment verifier = new VerificateurBatiment();
-        return batiments.stream().allMatch(b -> verifier.verifBatiment(b, startOne));
+        return null;
     }
 
     /**
@@ -211,20 +211,53 @@ public class Campus implements Observable {
      * Importe des bâtiments depuis un fichier JSON et les ajoute au campus si valides.
      *
      * @param nomFichierEntree Nom du fichier JSON d'entrée.
-     * @return Liste des bâtiments importés.
      * @throws Exception En cas d'erreur de lecture.
      */
-    public List<Batiment> jsonToBatiments(String nomFichierEntree) throws Exception {
+    public String jsonToBatiments(String nomFichierEntree) throws Exception {
         BatimentFactoryJson factoryJson = new BatimentFactoryJson();
-        List<Batiment> imported = factoryJson.jsonToBatiments(nomFichierEntree);
+        List<Batiment> batimentsImported = factoryJson.jsonToBatiments(nomFichierEntree).stream().filter(Objects::nonNull).toList();
 
+        Map<String,List<ProblemeBatiment>> mapProblemes = new HashMap<>();
         VerificateurBatiment verifier = new VerificateurBatiment();
-        if (imported != null && imported.stream().allMatch(b -> verifier.verifBatiment(b, startOne))) {
-            this.batiments = imported;
-            notifyObservers();
-        }
 
-        return imported;
+        batimentsImported.forEach(b->{
+                    Map<String,List<ProblemeBatiment>> map=verifier.verifBatiment(b, startOne);
+                    mapProblemes.putAll(map);
+                    if(batiments.contains(b)){
+                        map.get(b.getNom()).add(ProblemeBatiment.NOMINLISTE);
+                        map.get(b.getNom()).remove(ProblemeBatiment.AUCUN);
+                    }
+                    if(map.get(b.getNom()).contains(ProblemeBatiment.AUCUN)){
+                        batiments.add(b);
+                    }
+        });
+
+        notifyObservers();
+        return checkError(mapProblemes);
+    }
+
+    public String checkError(Map<String,List<ProblemeBatiment>> mapProblemes){
+        if(mapProblemes.isEmpty()){
+            return null;
+        }
+        AtomicReference<String> res = new AtomicReference<String>("");
+        mapProblemes.forEach((k,v)->{
+            res.set(res.get()+"Problemes pour le batiment "+k);
+            v.forEach(p->{
+                switch (p){
+                    case NOM -> res.set(res.get()+"\nNom du batiment null ou vide");
+                    case NOMINLISTE -> res.set(res.get()+"\nNom du batiment déjà existant");
+                    case USAGE -> res.set(res.get()+"\nUsage du batiment null ou vide");
+                    case ETAGES -> res.set(res.get()+"\nEtages incorrects : "+p.getEtagesProblemes());
+                    case PIECES -> res.set(res.get()+"\nPieces incorrectes : "+p.getPiecesProblemes());
+                    case ETAGE_ET_PIECE -> {
+                        res.set(res.get()+"\nEtages incorrects : "+p.getEtagesProblemes());
+                        res.set(res.get()+"\nPieces incorrectes : "+p.getPiecesProblemes());
+                    }
+                }
+            });
+        });
+        return res.get();
     }
 
     /**

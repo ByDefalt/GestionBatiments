@@ -26,7 +26,6 @@ public class VueBatiment implements Observer {
     public void afficherDetailsBatiment() {
         System.out.println("Détails du bâtiment :");
         System.out.println("Nom : " + batiment.getNom());
-        System.out.println("Numero : " + batiment.getNumero());
         System.out.println("Usage : " + batiment.getUsage());
         System.out.println("Nombre d'étages : " + batiment.getEtages().size());
         System.out.println("Nombre de pièces : " + batiment.getPieces().size());

@@ -136,10 +136,7 @@ public class Piece implements Visitable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Piece piece = (Piece) o;
-        return surface == piece.surface &&
-                estBureau == piece.estBureau &&
-                numero == piece.numero &&
-                Objects.equals(etage, piece.etage);
+        return numero==piece.numero;
     }
 
     /**
