@@ -3,6 +3,7 @@ package Defalt.Batiments.Visiteur;
 import Defalt.Batiments.BatimentsMetiers.Batiment;
 import Defalt.Batiments.BatimentsMetiers.Etage;
 import Defalt.Batiments.BatimentsMetiers.Piece;
+import javafx.scene.control.TreeItem;
 
 /**
  * Implémentation de l'interface {@link Visiteur} qui affiche les informations
@@ -12,15 +13,34 @@ import Defalt.Batiments.BatimentsMetiers.Piece;
  * et {@link Piece} spécifiquement.
  */
 public class VisiteurBureauSurface implements Visiteur {
-
+    private TreeItem<String> rootItem;
+    public VisiteurBureauSurface() {
+        this.rootItem = new TreeItem<>();
+    }
     /**
      * Affiche le nom du bâtiment.
      *
      * @param batiment Le bâtiment à visiter.
      */
     @Override
-    public void visit(Batiment batiment) {
-        System.out.println("Batiment : " + batiment.getNom());
+    public TreeItem<String> visit(Batiment batiment) {
+        rootItem.setValue("Batiment : "+batiment.getNom());
+        rootItem.setExpanded(true);
+        Etage etageVisitedObject = null;
+        TreeItem<String> etageItem = null;
+        for (Piece piece : batiment.getPieces()) {
+            if (!piece.getEtage().equals(etageVisitedObject)) {
+                etageItem=piece.getEtage().accept(this);
+                etageItem.setExpanded(true);
+                rootItem.getChildren().add(etageItem);
+                etageVisitedObject = piece.getEtage();
+            }
+            TreeItem<String> pieceItem = piece.accept(this);
+            if(pieceItem!=null){
+                etageItem.getChildren().add(pieceItem);
+            }
+        }
+        return rootItem;
     }
 
     /**
@@ -29,8 +49,8 @@ public class VisiteurBureauSurface implements Visiteur {
      * @param etage L'étage à visiter.
      */
     @Override
-    public void visit(Etage etage) {
-        System.out.println("  Etage n°" + etage.getNumero());
+    public TreeItem<String> visit(Etage etage) {
+        return new TreeItem<>("  Etage n°" + etage.getNumero());
     }
 
     /**
@@ -40,9 +60,11 @@ public class VisiteurBureauSurface implements Visiteur {
      * @param piece La pièce à visiter.
      */
     @Override
-    public void visit(Piece piece) {
+    public TreeItem<String> visit(Piece piece) {
         if (piece.isEstBureau()) {
-            System.out.println("    Bureau n°" + piece.getNumero() + " (Surface : " + piece.getSurface() + " m²)");
+            return new TreeItem<>("Bureau n°" + piece.getNumero() + " (Surface : " + piece.getSurface() + " m²)");
+        }else {
+            return null;
         }
     }
 }

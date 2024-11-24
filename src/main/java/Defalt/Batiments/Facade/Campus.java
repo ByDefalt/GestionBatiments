@@ -8,26 +8,16 @@ import Defalt.Batiments.Observer.Observer;
 import Defalt.Batiments.Verificateur.ProblemeBatiment;
 import Defalt.Batiments.Verificateur.VerificateurBatiment;
 import Defalt.Batiments.Visiteur.Visiteur;
+import javafx.scene.control.TreeItem;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Classe représentant un campus contenant plusieurs bâtiments.
  * Fournit des fonctionnalités pour créer, gérer, et vérifier les bâtiments.
  */
 public class Campus implements Observable {
-
-    /**
-     * Nom du campus.
-     */
-    private String nom;
-
-    /**
-     * Indique si la numérotation des étages et pièces commence à 1 (true) ou à 0 (false).
-     */
-    private Boolean startOne;
 
     /**
      * Usine pour la création de bâtiments.
@@ -39,55 +29,16 @@ public class Campus implements Observable {
      */
     private List<Batiment> batiments;
 
-    private List<Observer> observers = new ArrayList<>();
+    private List<Observer> observers;
 
     /**
      * Constructeur du campus.
      *
-     * @param nom      Nom du campus.
-     * @param startOne Indique si la numérotation commence à 1 (true) ou à 0 (false).
      */
-    public Campus(String nom, Boolean startOne) {
-        this.nom = nom;
-        this.startOne = startOne;
+    public Campus() {
         this.batimentFactory = new BatimentFactory();
         this.batiments = new ArrayList<>();
-    }
-
-    /**
-     * Retourne le paramètre `startOne`.
-     *
-     * @return {@code true} si la numérotation commence à 1, {@code false} sinon.
-     */
-    public Boolean getStartOne() {
-        return startOne;
-    }
-
-    /**
-     * Définit le paramètre `startOne`.
-     *
-     * @param startOne {@code true} pour commencer la numérotation à 1, {@code false} pour commencer à 0.
-     */
-    public void setStartOne(Boolean startOne) {
-        this.startOne = startOne;
-    }
-
-    /**
-     * Retourne le nom du campus.
-     *
-     * @return Nom du campus.
-     */
-    public String getNom() {
-        return nom;
-    }
-
-    /**
-     * Définit le nom du campus.
-     *
-     * @param nom Nouveau nom du campus.
-     */
-    public void setNom(String nom) {
-        this.nom = nom;
+        this.observers = new ArrayList<>();
     }
 
     /**
@@ -101,10 +52,7 @@ public class Campus implements Observable {
      * @param nbPiece      Nombre de pièces par étage.
      * @return {@code true} si le bâtiment a été créé avec succès, {@code false} si le nom existe déjà.
      */
-    public boolean createBatiment(String nom, String usage, int surfacePiece, int nbBureau, int nbEtage, int nbPiece) {
-        boolean exists = batiments.stream().anyMatch(i -> i.getNom().equals(nom));
-        if (exists) return false;
-
+    public boolean createBatiment(String nom, String usage, int surfacePiece,boolean startOne, int nbBureau, int nbEtage, int nbPiece) {
         Batiment batiment = batimentFactory.createBatiment(nom, usage, surfacePiece, startOne, nbBureau, nbEtage, nbPiece);
         if (batiment == null) return false;
 
@@ -178,16 +126,6 @@ public class Campus implements Observable {
     }
 
     /**
-     * Vérifie si tous les bâtiments du campus respectent les contraintes de numérotation.
-     *
-     * @return {@code true} si tous les bâtiments sont valides, {@code false} sinon.
-     */
-    public List<List<ProblemeBatiment>> verifBatiments() {
-        VerificateurBatiment verifier = new VerificateurBatiment();
-        return null;
-    }
-
-    /**
      * Retourne les noms des bâtiments du campus.
      *
      * @return Liste des noms des bâtiments.
@@ -217,58 +155,77 @@ public class Campus implements Observable {
         BatimentFactoryJson factoryJson = new BatimentFactoryJson();
         List<Batiment> batimentsImported = factoryJson.jsonToBatiments(nomFichierEntree).stream().filter(Objects::nonNull).toList();
 
-        Map<String,List<ProblemeBatiment>> mapProblemes = new HashMap<>();
         VerificateurBatiment verifier = new VerificateurBatiment();
-
-        batimentsImported.forEach(b->{
-                    Map<String,List<ProblemeBatiment>> map=verifier.verifBatiment(b, startOne);
-                    mapProblemes.putAll(map);
-                    if(batiments.contains(b)){
-                        map.get(b.getNom()).add(ProblemeBatiment.NOMINLISTE);
-                        map.get(b.getNom()).remove(ProblemeBatiment.AUCUN);
-                    }
-                    if(map.get(b.getNom()).contains(ProblemeBatiment.AUCUN)){
-                        batiments.add(b);
-                    }
-        });
-
-        notifyObservers();
-        return checkError(mapProblemes);
-    }
-
-    public String checkError(Map<String,List<ProblemeBatiment>> mapProblemes){
-        if(mapProblemes.isEmpty()){
-            return null;
-        }
-        AtomicReference<String> res = new AtomicReference<String>("");
-        mapProblemes.forEach((k,v)->{
-            res.set(res.get()+"Problemes pour le batiment "+k);
-            v.forEach(p->{
-                switch (p){
-                    case NOM -> res.set(res.get()+"\nNom du batiment null ou vide");
-                    case NOMINLISTE -> res.set(res.get()+"\nNom du batiment déjà existant");
-                    case USAGE -> res.set(res.get()+"\nUsage du batiment null ou vide");
-                    case ETAGES -> res.set(res.get()+"\nEtages incorrects : "+p.getEtagesProblemes());
-                    case PIECES -> res.set(res.get()+"\nPieces incorrectes : "+p.getPiecesProblemes());
-                    case ETAGE_ET_PIECE -> {
-                        res.set(res.get()+"\nEtages incorrects : "+p.getEtagesProblemes());
-                        res.set(res.get()+"\nPieces incorrectes : "+p.getPiecesProblemes());
-                    }
+        StringBuilder res = new StringBuilder();
+        int n=1;
+        for(Batiment b:batimentsImported){
+            List<ProblemeBatiment> listProbleme=verifier.verifBatiment(b);
+            if(!listProbleme.contains(ProblemeBatiment.NULLBATIMENT)){
+                if (batiments.contains(b)) {
+                    listProbleme.add(ProblemeBatiment.NOMINLISTE);
+                    listProbleme.remove(ProblemeBatiment.AUCUN);
                 }
-            });
-        });
-        return res.get();
+            }
+            n++;
+            if (listProbleme.contains(ProblemeBatiment.AUCUN)) {
+                batiments.add(b);
+            }else{
+                res.append(checkError(listProbleme, b, n));
+            }
+        }
+        notifyObservers();
+        return res.toString();
     }
 
-    /**
-     * Affiche les caractéristiques des bâtiments en utilisant un visiteur.
-     *
-     * @param visiteur Visiteur appliqué aux bâtiments.
-     */
-    public void afficherCaracteristiques(Visiteur visiteur) {
-        for (Batiment batiment : batiments) {
-            batiment.accept(visiteur);
+    public String checkError(List<ProblemeBatiment> listProbleme, Batiment batiment, int n){
+        StringBuilder res= new StringBuilder();
+        if(listProbleme.contains(ProblemeBatiment.NULLBATIMENT)){
+            return "\nLe batiment "+n+" est null\n";
         }
+        if(listProbleme.contains(ProblemeBatiment.NOM)){
+            res.append("Le batiment ").append(batiment.getNom()).append(" a les problèmes suivants :\n");
+        }else{
+            res.append("Le batiment ").append(n).append(" a les problèmes suivants :\n");
+        }
+        for(ProblemeBatiment problemeBatiment:listProbleme){
+            switch (problemeBatiment){
+                case NOM:
+                    res.append("    Le nom du batiment est incorrect\n");
+                    break;
+                case USAGE:
+                    res.append("    L'usage du batiment est incorrect\n");
+                    break;
+                case ETAGES:
+                    res.append("    L'ordre des étages est incorrecte ").append(problemeBatiment.getEtagesProblemes()).append("\n");
+                    break;
+                case PIECES:
+                    res.append("    L'ordre des pieces est incorrecte ").append(problemeBatiment.getPiecesProblemes()).append("\n");
+                    break;
+                case NULLETAGE:
+                    res.append("    Un étage est null\n");
+                    break;
+                case NULLEPIECE:
+                    res.append("    Une pièce est null\n");
+                    break;
+                case NOMINLISTE:
+                    res.append("    Le nom batiment existe déja\n");
+                    break;
+                default:
+                    break;
+            }
+        }
+        return res.toString();
+    }
+
+    public TreeItem<String> afficherDetailsBatiment(String nomBatiment, Visiteur visiteur) {
+            Batiment batiment=batiments.stream()
+                    .filter(b->b.getNom().equals(nomBatiment))
+                    .findFirst()
+                    .orElse(null);
+            if(batiment==null){
+                return null;
+            }
+            return batiment.accept(visiteur);
     }
 
     @Override
@@ -286,42 +243,6 @@ public class Campus implements Observable {
         for (Observer observer : observers) {
             observer.update();
         }
-    }
-
-    /**
-     * Vérifie si deux campus sont égaux (basé sur le nom).
-     *
-     * @param o Objet à comparer.
-     * @return {@code true} si les campus sont égaux, {@code false} sinon.
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Campus campus = (Campus) o;
-        return Objects.equals(nom, campus.nom);
-    }
-
-    /**
-     * Retourne le code de hachage du campus (basé sur le nom).
-     *
-     * @return Code de hachage.
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(nom);
-    }
-
-    /**
-     * Retourne une représentation textuelle du campus.
-     *
-     * @return Représentation textuelle.
-     */
-    @Override
-    public String toString() {
-        return "Campus{" +
-                "nom='" + nom + '\'' +
-                '}';
     }
 
     public List<Observer> getObservers() {

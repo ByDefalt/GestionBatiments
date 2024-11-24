@@ -1,6 +1,4 @@
 package Defalt.Batiments.Verificateur;
-import Defalt.Batiments.BatimentsMetiers.Etage;
-import Defalt.Batiments.BatimentsMetiers.Piece;
 
 import java.util.List;
 
@@ -10,7 +8,9 @@ public enum ProblemeBatiment {
     USAGE,
     ETAGES,
     PIECES,
-    ETAGE_ET_PIECE,
+    NULLBATIMENT,
+    NULLETAGE,
+    NULLEPIECE,
     AUCUN;
 
     private List<Integer> etagesProblemes;

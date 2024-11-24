@@ -5,7 +5,6 @@ import Defalt.Batiments.BatimentsMetiers.Etage;
 import Defalt.Batiments.BatimentsMetiers.Piece;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Classe utilitaire pour vérifier l'intégrité d'un objet {@link Batiment}.
@@ -19,41 +18,46 @@ public class VerificateurBatiment {
      * Les numéros doivent suivre une séquence croissante à partir de 0 ou 1, selon le paramètre `startOne`.
      *
      * @param bat      Le bâtiment à vérifier.
-     * @param startOne Indique si la numérotation commence à 1 (true) ou à 0 (false).
      * @return {@code true} si toutes les numérotations sont correctes, {@code false} sinon.
      */
-    public Map<String,List<ProblemeBatiment>> verifBatiment(Batiment bat, boolean startOne) {
-        Map<String,List<ProblemeBatiment>> mapProblemes = new HashMap<>();
+    public List<ProblemeBatiment> verifBatiment(Batiment bat) {
         List<ProblemeBatiment> problemes = new ArrayList<>();
         if (bat == null) {
-            return null;
+            problemes.add(ProblemeBatiment.NULLBATIMENT);
+            return problemes;
         }
         if(bat.getNom()!=null && bat.getNom().isEmpty()){
             problemes.add(ProblemeBatiment.NOM);
         }
         if(bat.getUsage()!=null && bat.getUsage().isEmpty()){
-            problemes.add(ProblemeBatiment.USAGE.withDetails(new ArrayList<>(),new ArrayList<>()));
+            problemes.add(ProblemeBatiment.USAGE);
         }
-        AtomicInteger piecenb = new AtomicInteger(startOne ? 1 : 0);
-        AtomicInteger etagenb = new AtomicInteger(startOne ? 1 : 0);
+        boolean startOne=bat.getEtages().getFirst()!=null && bat.getEtages().getFirst().getNumero()==1;
 
-        List<Integer> etagesProblemes = bat.getEtages()
-                .stream()
-                .filter(Objects::nonNull)
-                .map(Etage::getNumero)
-                .filter(numero -> numero != etagenb.getAndIncrement())
-                .toList();
+        int piecenb = startOne ? 1 : 0;
+        int etagenb = startOne ? 1 : 0;
 
-        List<Integer> piecesProblemes = bat.getPieces()
-                .stream()
-                .filter(Objects::nonNull)
-                .map(Piece::getNumero)
-                .filter(numero -> numero != piecenb.getAndIncrement())
-                .toList();
-
-        if(!etagesProblemes.isEmpty() && !piecesProblemes.isEmpty()){
-            problemes.add(ProblemeBatiment.ETAGE_ET_PIECE.withDetails(etagesProblemes, piecesProblemes));
+        List<Integer> etagesProblemes = new ArrayList<>();
+        for(Etage etage:bat.getEtages()){
+            if (etage==null) {
+                etagenb++;
+                problemes.add(ProblemeBatiment.NULLETAGE);
+            }
+            if (etage.getNumero() != etagenb++) {
+                etagesProblemes.add(etage.getNumero());
+            }
         }
+        List<Integer> piecesProblemes = new ArrayList<>();
+        for(Piece piece: bat.getPieces()){
+            if (piece==null) {
+                piecenb++;
+                problemes.add(ProblemeBatiment.NULLEPIECE);
+            }
+            if (piece.getNumero() != piecenb++) {
+                piecesProblemes.add(piece.getNumero());
+            }
+        }
+
         if(!etagesProblemes.isEmpty()){
             problemes.add(ProblemeBatiment.ETAGES.withDetails(etagesProblemes, new ArrayList<>()));
         }
@@ -63,7 +67,6 @@ public class VerificateurBatiment {
         if(problemes.isEmpty()){
             problemes.add(ProblemeBatiment.AUCUN.withDetails(new ArrayList<>(),new ArrayList<>()));
         }
-        mapProblemes.put(bat.getNom(),problemes);
-        return mapProblemes;
+        return problemes;
     }
 }

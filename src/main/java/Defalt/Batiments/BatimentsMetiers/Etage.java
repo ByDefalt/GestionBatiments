@@ -2,6 +2,7 @@ package Defalt.Batiments.BatimentsMetiers;
 
 import Defalt.Batiments.Visiteur.Visitable;
 import Defalt.Batiments.Visiteur.Visiteur;
+import javafx.scene.control.TreeItem;
 
 import java.util.Objects;
 
@@ -48,8 +49,8 @@ public class Etage implements Visitable {
      * @param visiteur Le visiteur à accepter.
      */
     @Override
-    public void accept(Visiteur visiteur) {
-        visiteur.visit(this);
+    public TreeItem<String> accept(Visiteur visiteur) {
+        return visiteur.visit(this);
     }
 
     /**
@@ -60,7 +61,7 @@ public class Etage implements Visitable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || this.getClass() != o.getClass()) return false;
         Etage etage = (Etage) o;
         return numero == etage.numero;
     }

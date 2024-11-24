@@ -164,8 +164,6 @@ public class BatimentFactory {
      * @return Une instance de {@link Batiment}, ou {@code null} si les paramètres sont invalides.
      */
     public Batiment createBatiment(String nom, String usage, int surfacePiece, boolean startOne, int nbBureau, int nbEtage, int nbPiece) {
-        if (nbEtage < 1 || nbPiece < 1 || surfacePiece < 1) return null;
-
         int nbBureaux = nbBureau;
         Batiment batiment = new Batiment(nom, usage);
 

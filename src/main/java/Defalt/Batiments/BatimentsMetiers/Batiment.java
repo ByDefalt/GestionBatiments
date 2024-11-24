@@ -2,7 +2,7 @@ package Defalt.Batiments.BatimentsMetiers;
 
 import Defalt.Batiments.Visiteur.Visitable;
 import Defalt.Batiments.Visiteur.Visiteur;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javafx.scene.control.TreeItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,18 +114,8 @@ public class Batiment implements Visitable {
      * @param visiteur Le visiteur à accepter.
      */
     @Override
-    public void accept(Visiteur visiteur) {
-        visiteur.visit(this);
-        boolean etageVisited = false;
-        Etage etageVisitedObject = null;
-        for (Piece piece : pieces) {
-            if (!etageVisited || etageVisitedObject != piece.getEtage()) {
-                piece.getEtage().accept(visiteur);
-                etageVisited = true;
-                etageVisitedObject = piece.getEtage();
-            }
-            piece.accept(visiteur);
-        }
+    public TreeItem<String> accept(Visiteur visiteur) {
+        return visiteur.visit(this);
     }
 
     /**

@@ -2,6 +2,7 @@ package Defalt.Batiments.BatimentsMetiers;
 
 import Defalt.Batiments.Visiteur.Visitable;
 import Defalt.Batiments.Visiteur.Visiteur;
+import javafx.scene.control.TreeItem;
 
 import java.util.Objects;
 
@@ -121,8 +122,8 @@ public class Piece implements Visitable {
      * @param visiteur Le visiteur à accepter.
      */
     @Override
-    public void accept(Visiteur visiteur) {
-        visiteur.visit(this);
+    public TreeItem<String> accept(Visiteur visiteur) {
+        return visiteur.visit(this);
     }
 
     /**
