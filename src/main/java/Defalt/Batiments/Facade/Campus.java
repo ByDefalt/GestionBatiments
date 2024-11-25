@@ -99,11 +99,10 @@ public class Campus implements Observable {
      * Met à jour l'état "bureau" d'une pièce spécifique.
      *
      * @param nom   Nom du bâtiment contenant la pièce.
-     * @param numEtage Numéro de l'étage.
      * @param numPiece Numéro de la pièce.
      * @return {@code true} si la mise à jour a réussi, {@code false} sinon.
      */
-    public boolean updatePieceEstBureau(String nom, int numEtage, int numPiece) {
+    public boolean updatePieceEstBureau(String nom,int numPiece) {
         Batiment batiment = batiments.stream()
                 .filter(i -> i.getNom().equals(nom))
                 .findFirst()
@@ -112,7 +111,7 @@ public class Campus implements Observable {
         if (batiment == null) return false;
 
         return batiment.getPieces().stream()
-                .filter(i -> i.getEtage().getNumero() == numEtage && i.getNumero() == numPiece)
+                .filter(i -> i.getNumero() == numPiece)
                 .findFirst()
                 .map(piece1 -> {
                     piece1.setEstBureau(!piece1.isEstBureau());

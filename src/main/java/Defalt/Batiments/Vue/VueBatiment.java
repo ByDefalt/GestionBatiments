@@ -15,6 +15,8 @@ import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class VueBatiment implements Observer {
@@ -86,45 +88,22 @@ public class VueBatiment implements Observer {
         renameStage.close();
 
     }
-    private Stage changerTypeStage;
-    public void ouvrirChangerTypePiece() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("update_estbureau.fxml"));
-            loader.setController(this);
-            Parent formRoot = loader.load();
-            if(changerTypeStage != null && changerTypeStage.isShowing()){
-                changerTypeStage.close();
-            }
-            changerTypeStage = new Stage();
-            changerTypeStage.setTitle("Changer type piece");
-            changerTypeStage.setScene(new Scene(formRoot));
-            changerTypeStage.show();
-        } catch (IOException e) {
-            showError("Erreur","Erreur","Erreur lors de l'ouverture de la fenetre");
-        }
-    }
     public void changerTypePiece() {
-        if(textFielNumeroEtageUpdateBureauBatiment==null || textFielNumeroEtageUpdateBureauBatiment.getText().isEmpty()){
-            showError("Erreur","Erreur","Le champ numero etage ne peut pas etre vide");
-            return;
+        if(treeView.getRoot()!=null){
+            if(treeView.getRoot().getChildren()!=null){
+                if(treeView.getSelectionModel().getSelectedItem()!=null){
+                    String selectedItem = treeView.getSelectionModel().getSelectedItem().getValue();
+                    Pattern pattern = Pattern.compile("(Piece|Bureau)\\s*n°(\\d+)");
+                    Matcher matcher = pattern.matcher(selectedItem);
+                    if (matcher.find()) {
+                        int numero = Integer.parseInt(matcher.group(2));
+                        campus.updatePieceEstBureau(nomBatiment
+                                ,numero);
+                        campus.notifyObservers();
+                    }
+                }
+            }
         }
-        if(textFielNumeroPieceUpdateBureauBatiment==null || textFielNumeroPieceUpdateBureauBatiment.getText().isEmpty()){
-            showError("Erreur","Erreur","Le champ numero piece ne peut pas etre vide");
-            return;
-        }
-        if(textFielNumeroPieceUpdateBureauBatiment.getText().matches("[a-zA-Z]+")){
-            showError("Erreur","Erreur","Le champ numero piece doit etre un nombre");
-            return;
-        }
-        if (textFielNumeroEtageUpdateBureauBatiment.getText().matches("[a-zA-Z]+")){
-            showError("Erreur","Erreur","Le champ numero etage doit etre un nombre");
-            return;
-        }
-        campus.updatePieceEstBureau(nomBatiment
-                ,Integer.parseInt(textFielNumeroEtageUpdateBureauBatiment.getText())
-                ,Integer.parseInt(textFielNumeroPieceUpdateBureauBatiment.getText()));
-        campus.notifyObservers();
-        changerTypeStage.close();
     }
 
     public void affichageTypePiece() {

@@ -86,7 +86,7 @@
                           </items>
                         </Menu>
                       <MenuItem mnemonicParsing="false" onAction="#ouvrirChangerNomBatiment" text="Rennomer Batiment" />
-                        <MenuItem mnemonicParsing="false" onAction="#ouvrirChangerTypePiece" text="Changer type Piece" />
+                        <MenuItem mnemonicParsing="false" onAction="#changerTypePiece" text="Changer type Piece" />
                     </items>
                   </ContextMenu>
                </contextMenu>
