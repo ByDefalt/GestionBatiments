@@ -2,6 +2,7 @@ package Defalt.Batiments.BatimentsMetiers;
 
 import Defalt.Batiments.Visiteur.Visitable;
 import Defalt.Batiments.Visiteur.Visiteur;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.scene.control.TreeItem;
 
 import java.util.ArrayList;

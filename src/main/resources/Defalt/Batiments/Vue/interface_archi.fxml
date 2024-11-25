@@ -83,7 +83,7 @@
                      <contextMenu>
                         <ContextMenu>
                           <items>
-                              <MenuItem mnemonicParsing="false" onAction="#afficherDetailsBatiment" text="Afficher" />
+                              <MenuItem mnemonicParsing="false" fx:id="menuItemAfficherDetailsBatiment" text="Afficher" />
                             <MenuItem mnemonicParsing="false" onAction="#openFormWindow" text="Ajouter" />
                               <MenuItem mnemonicParsing="false" onAction="#supprimerBatiment" text="Supprimer" />
                           </items>

@@ -23,11 +23,9 @@ public class VueListeBatiments implements Observer {
     private Campus campus;
 
 
-    private ControllerVue controllerVue;
 
-    public VueListeBatiments(Campus campus, ControllerVue controllerVue) {
+    public VueListeBatiments(Campus campus) {
         this.campus = campus;
-        this.controllerVue = controllerVue;
         this.campus.addObserver(this);
     }
 
@@ -45,10 +43,24 @@ public class VueListeBatiments implements Observer {
     private TextField textFieldSurfacePiecesBatiment;
     @FXML
     private CheckBox checkBoxNumerotationBatiment;
+
+
     @FXML
     private ListView listViewBatiments;
     @FXML
     private Button buttonCreeBatiment;
+
+
+    @FXML
+    private MenuItem menuItemAfficherDetailsBatiment;
+
+
+    public ListView getListViewBatiments() {
+        return listViewBatiments;
+    }
+    public MenuItem getMenuItemAfficherDetailsBatiment() {
+        return menuItemAfficherDetailsBatiment;
+    }
 
     private ObservableList<String> observableList = FXCollections.observableArrayList();
 
@@ -147,7 +159,7 @@ public class VueListeBatiments implements Observer {
                 ,Integer.parseInt(textFieldNombreEtageBatiment.getText())
                 ,Integer.parseInt(textFieldNombrePieceBatiment.getText()));
 
-
+        campus.notifyObservers();
         Stage stage = (Stage) buttonCreeBatiment.getScene().getWindow();
         stage.close();
     }
@@ -156,15 +168,10 @@ public class VueListeBatiments implements Observer {
         String selectedItem = (String) listViewBatiments.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             campus.destroyBatiment(selectedItem);
+            campus.notifyObservers();
         }
     }
 
-    public void afficherDetailsBatiment(){
-        String selectedItem = (String) listViewBatiments.getSelectionModel().getSelectedItem();
-        if (selectedItem != null) {
-            controllerVue.ouvertureVueBatiment(selectedItem);
-        }
-    }
     public void jsonToBatiments(){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Sélectionner un fichier");
@@ -182,10 +189,10 @@ public class VueListeBatiments implements Observer {
             if(!res.isEmpty()){
                 showError("Erreur","Erreur lecture fichier",res);
             }
+            campus.notifyObservers();
         } catch (Exception e) {
             showError("Erreur","Erreur","Erreur lors de la lecture du fichier");
         }
-        update();
     }
 
     public void fermerFenetreForm(){

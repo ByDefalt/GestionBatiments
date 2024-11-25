@@ -19,14 +19,12 @@ import java.io.IOException;
 
 public class VueBatiment implements Observer {
     private Campus campus;
-    private ControllerVue controllerVue;
     private String nomBatiment;
 
     private Visiteur visiteur;
 
-    public VueBatiment(Campus campus,ControllerVue controllerVue,String nomBatiment) {
+    public VueBatiment(Campus campus,String nomBatiment) {
         this.campus = campus;
-        this.controllerVue = controllerVue;
         this.nomBatiment = nomBatiment;
         this.visiteur = new VisiteurTypePiece();
         this.campus.addObserver(this);
@@ -84,7 +82,7 @@ public class VueBatiment implements Observer {
         }
         campus.updateNomBatiment(nomBatiment,textFieldRenameBatiment.getText());
         this.nomBatiment = textFieldRenameBatiment.getText();
-        update();
+        campus.notifyObservers();
         renameStage.close();
 
     }
@@ -125,7 +123,7 @@ public class VueBatiment implements Observer {
         campus.updatePieceEstBureau(nomBatiment
                 ,Integer.parseInt(textFielNumeroEtageUpdateBureauBatiment.getText())
                 ,Integer.parseInt(textFielNumeroPieceUpdateBureauBatiment.getText()));
-        update();
+        campus.notifyObservers();
         changerTypeStage.close();
     }
 

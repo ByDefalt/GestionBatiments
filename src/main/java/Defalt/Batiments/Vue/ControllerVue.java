@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-import static javafx.application.Application.launch;
 
 public class ControllerVue extends Application {
     private Campus campus;
@@ -23,12 +22,18 @@ public class ControllerVue extends Application {
     public void ouvertureVueListeBatiments(Stage primaryStage){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("interface_archi.fxml"));
 
-        VueListeBatiments vueListeBatiments = new VueListeBatiments(campus,this);
+        VueListeBatiments vueListeBatiments = new VueListeBatiments(campus);
         loader.setController(vueListeBatiments);
         try {
             Parent root=loader.load();
             primaryStage.setOnCloseRequest(event -> {
                 campus.removeObserver(vueListeBatiments);
+            });
+            vueListeBatiments.getMenuItemAfficherDetailsBatiment().setOnAction(event->{
+                String selectedItem = (String) vueListeBatiments.getListViewBatiments().getSelectionModel().getSelectedItem();
+                if (selectedItem != null) {
+                    ouvertureVueBatiment(selectedItem);
+                }
             });
             primaryStage.setTitle("Batiments");
             primaryStage.setScene(new Scene(root));
@@ -40,7 +45,7 @@ public class ControllerVue extends Application {
     public void ouvertureVueBatiment(String nomBatiment){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("details_batiment.fxml"));
 
-        VueBatiment vueBatiment = new VueBatiment(campus,this,nomBatiment);
+        VueBatiment vueBatiment = new VueBatiment(campus,nomBatiment);
         loader.setController(vueBatiment);
         try {
             Parent root=loader.load();

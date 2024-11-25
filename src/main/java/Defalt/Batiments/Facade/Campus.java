@@ -57,7 +57,6 @@ public class Campus implements Observable {
         if (batiment == null) return false;
 
         batiments.add(batiment);
-        notifyObservers();
         return true;
     }
 
@@ -73,7 +72,6 @@ public class Campus implements Observable {
                 .findFirst()
                 .map(batiment -> {
                     batiments.remove(batiment);
-                    notifyObservers();
                     return true;
                 })
                 .orElse(false);
@@ -92,7 +90,6 @@ public class Campus implements Observable {
                 .findFirst()
                 .map(batiment -> {
                     batiment.setNom(newNom);
-                    notifyObservers();
                     return true;
                 })
                 .orElse(false);
@@ -119,7 +116,6 @@ public class Campus implements Observable {
                 .findFirst()
                 .map(piece1 -> {
                     piece1.setEstBureau(!piece1.isEstBureau());
-                    notifyObservers();
                     return true;
                 })
                 .orElse(false);
@@ -160,20 +156,17 @@ public class Campus implements Observable {
         int n=1;
         for(Batiment b:batimentsImported){
             List<ProblemeBatiment> listProbleme=verifier.verifBatiment(b);
-            if(!listProbleme.contains(ProblemeBatiment.NULLBATIMENT)){
-                if (batiments.contains(b)) {
-                    listProbleme.add(ProblemeBatiment.NOMINLISTE);
-                    listProbleme.remove(ProblemeBatiment.AUCUN);
-                }
+            if (batiments.contains(b)) {
+                listProbleme.add(ProblemeBatiment.NOMINLISTE);
+                listProbleme.remove(ProblemeBatiment.AUCUN);
             }
-            n++;
             if (listProbleme.contains(ProblemeBatiment.AUCUN)) {
                 batiments.add(b);
             }else{
                 res.append(checkError(listProbleme, b, n));
             }
+            n++;
         }
-        notifyObservers();
         return res.toString();
     }
 
@@ -182,8 +175,8 @@ public class Campus implements Observable {
         if(listProbleme.contains(ProblemeBatiment.NULLBATIMENT)){
             return "\nLe batiment "+n+" est null\n";
         }
-        if(listProbleme.contains(ProblemeBatiment.NOM)){
-            res.append("Le batiment ").append(batiment.getNom()).append(" a les problèmes suivants :\n");
+        if(!listProbleme.contains(ProblemeBatiment.NOM)){
+            res.append("Le batiment '").append(batiment.getNom()).append("' a les problèmes suivants :\n");
         }else{
             res.append("Le batiment ").append(n).append(" a les problèmes suivants :\n");
         }
