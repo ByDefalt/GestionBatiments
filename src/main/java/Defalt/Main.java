@@ -38,6 +38,6 @@ public class Main {
             }
         }
         Campus campus3 = new Campus();
-        System.out.println(campus3.jsonToBatiments("batiments99False.json"));
+        System.out.println(campus3.jsonToBatiments("test_batiments_mauvais.json"));
     }
 }

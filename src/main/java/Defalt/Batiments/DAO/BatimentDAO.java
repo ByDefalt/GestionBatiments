@@ -15,7 +15,6 @@ public class BatimentDAO{
         }
     }
 
-    // Désérialisation d'un bâtiment depuis un fichier
     public Batiment deserializeBatiment(String fileName) {
         Batiment batiment = null;
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
