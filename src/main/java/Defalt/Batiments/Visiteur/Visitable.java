@@ -12,6 +12,7 @@ public interface Visitable {
      * Accepte un visiteur pour exécuter une opération sur l'objet.
      *
      * @param visitor Le visiteur effectuant une opération sur cet objet.
+     * @return Un {@link TreeItem} représentant l'objet après l'opération.
      */
     TreeItem<String> accept(Visiteur visitor);
 }

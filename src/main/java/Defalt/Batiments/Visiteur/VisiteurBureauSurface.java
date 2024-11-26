@@ -9,34 +9,50 @@ import javafx.scene.control.TreeItem;
  * Implémentation de l'interface {@link Visiteur} qui affiche les informations
  * des bureaux et leur surface dans un bâtiment.
  * <p>
- * Utilise le pattern visiteur pour traiter les {@link Batiment}, {@link Etage},
- * et {@link Piece} spécifiquement.
+ * Cette classe utilise le pattern visiteur pour traverser la structure d'un bâtiment,
+ * ses étages et ses pièces. Elle construit un arbre hiérarchique de type {@link TreeItem}
+ * représentant les bureaux d'un bâtiment et leurs détails (numéro et surface).
+ * </p>
  */
 public class VisiteurBureauSurface implements Visiteur {
+    /**
+     * Racine de l'arbre contenant les informations du bâtiment.
+     */
     private TreeItem<String> rootItem;
+
+    /**
+     * Constructeur par défaut.
+     * Initialise la racine de l'arbre {@link TreeItem}.
+     */
     public VisiteurBureauSurface() {
         this.rootItem = new TreeItem<>();
     }
+
     /**
-     * Affiche le nom du bâtiment.
+     * Visite un objet {@link Batiment} pour en extraire les informations sur les bureaux
+     * et leurs surfaces, en parcourant ses étages et pièces.
      *
-     * @param batiment Le bâtiment à visiter.
+     * @param batiment le bâtiment à visiter.
+     * @return un objet {@link TreeItem} représentant la hiérarchie des bureaux du bâtiment.
      */
     @Override
     public TreeItem<String> visit(Batiment batiment) {
-        rootItem.setValue("Batiment : "+batiment.getNom());
+        rootItem.setValue("Bâtiment : " + batiment.getNom());
         rootItem.setExpanded(true);
-        Etage etageVisitedObject = null;
+
+        Etage etageVisited = null;
         TreeItem<String> etageItem = null;
+
         for (Piece piece : batiment.getPieces()) {
-            if (!piece.getEtage().equals(etageVisitedObject)) {
-                etageItem=piece.getEtage().accept(this);
+            if (!piece.getEtage().equals(etageVisited)) {
+                etageItem = piece.getEtage().accept(this);
                 etageItem.setExpanded(true);
                 rootItem.getChildren().add(etageItem);
-                etageVisitedObject = piece.getEtage();
+                etageVisited = piece.getEtage();
             }
+
             TreeItem<String> pieceItem = piece.accept(this);
-            if(pieceItem!=null){
+            if (pieceItem != null) {
                 etageItem.getChildren().add(pieceItem);
             }
         }
@@ -44,26 +60,28 @@ public class VisiteurBureauSurface implements Visiteur {
     }
 
     /**
-     * Affiche le numéro de l'étage.
+     * Visite un objet {@link Etage} pour récupérer ses informations.
      *
-     * @param etage L'étage à visiter.
+     * @param etage l'étage à visiter.
+     * @return un objet {@link TreeItem} contenant les informations de l'étage.
      */
     @Override
     public TreeItem<String> visit(Etage etage) {
-        return new TreeItem<>("  Etage n°" + etage.getNumero());
+        return new TreeItem<>("  Étage n°" + etage.getNumero());
     }
 
     /**
-     * Affiche les informations sur la pièce si elle est un bureau,
-     * y compris son numéro et sa surface.
+     * Visite un objet {@link Piece} pour récupérer ses informations si c'est un bureau.
      *
-     * @param piece La pièce à visiter.
+     * @param piece la pièce à visiter.
+     * @return un objet {@link TreeItem} contenant les informations de la pièce
+     *         si c'est un bureau, ou {@code null} sinon.
      */
     @Override
     public TreeItem<String> visit(Piece piece) {
         if (piece.isEstBureau()) {
             return new TreeItem<>("Bureau n°" + piece.getNumero() + " (Surface : " + piece.getSurface() + " m²)");
-        }else {
+        } else {
             return null;
         }
     }

@@ -4,13 +4,13 @@ import Defalt.Batiments.Visiteur.Visitable;
 import Defalt.Batiments.Visiteur.Visiteur;
 import javafx.scene.control.TreeItem;
 
-import java.util.Objects;
+import java.io.Serializable;
 
 /**
  * Représente une pièce dans un bâtiment.
  * Cette classe est visitable via le pattern Visiteur.
  */
-public class Piece implements Visitable {
+public class Piece implements Visitable, Serializable {
     /** Surface de la pièce en mètres carrés. */
     private int surface;
 
@@ -138,16 +138,6 @@ public class Piece implements Visitable {
         if (o == null || getClass() != o.getClass()) return false;
         Piece piece = (Piece) o;
         return numero==piece.numero;
-    }
-
-    /**
-     * Génère le code de hachage pour cette pièce.
-     *
-     * @return Le code de hachage.
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(surface, estBureau, numero, etage);
     }
 
     /**

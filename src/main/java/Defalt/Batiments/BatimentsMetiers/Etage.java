@@ -4,13 +4,13 @@ import Defalt.Batiments.Visiteur.Visitable;
 import Defalt.Batiments.Visiteur.Visiteur;
 import javafx.scene.control.TreeItem;
 
-import java.util.Objects;
+import java.io.Serializable;
 
 /**
  * Représente un étage dans un bâtiment.
  * Cette classe est visitable via le pattern Visiteur.
  */
-public class Etage implements Visitable {
+public class Etage implements Visitable, Serializable {
     /** Numéro unique de l'étage. */
     private int numero;
 
@@ -64,15 +64,6 @@ public class Etage implements Visitable {
         if (o == null || this.getClass() != o.getClass()) return false;
         Etage etage = (Etage) o;
         return numero == etage.numero;
-    }
-
-    /**
-     * Génère le code de hachage pour cet étage.
-     * @return Le code de hachage.
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(numero);
     }
 
     /**

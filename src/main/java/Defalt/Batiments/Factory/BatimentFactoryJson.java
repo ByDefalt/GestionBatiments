@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -25,9 +24,9 @@ public class BatimentFactoryJson {
      *
      * @param batiments La liste des bâtiments à sérialiser.
      * @param nomFichierSortie Le nom du fichier JSON où les bâtiments seront sauvegardés.
-     * @throws IOException Si une erreur d'entrée/sortie survient lors de l'écriture du fichier.
+     * @throws Exception Si une erreur d'entrée/sortie survient lors de l'écriture du fichier.
      */
-    public void BatimentsToJson(List<Batiment> batiments, String nomFichierSortie) throws IOException {
+    public void BatimentsToJson(List<Batiment> batiments, String nomFichierSortie) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(new File(nomFichierSortie), batiments);
     }

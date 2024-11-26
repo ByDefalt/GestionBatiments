@@ -4,7 +4,7 @@
         "usage": "Usage 1",
         "etages": [
             {
-                "numero": 1
+                "numero": 0
             },
             {
                 "numero": 5
@@ -16,7 +16,7 @@
                 "estBureau": true,
                 "numero": 1,
                 "etage": {
-                    "numero": 1
+                    "numero": 0
                 }
             },
             {
@@ -24,7 +24,7 @@
                 "estBureau": true,
                 "numero": 2,
                 "etage": {
-                    "numero": 1
+                    "numero": 0
                 }
             },
             {
@@ -32,7 +32,7 @@
                 "estBureau": true,
                 "numero": 3,
                 "etage": {
-                    "numero": 1
+                    "numero": 0
                 }
             },
             {
@@ -40,7 +40,7 @@
                 "estBureau": true,
                 "numero": 4,
                 "etage": {
-                    "numero": 2
+                    "numero": 1
                 }
             },
             {
@@ -48,7 +48,7 @@
                 "estBureau": true,
                 "numero": 5,
                 "etage": {
-                    "numero": 2
+                    "numero": 1
                 }
             }
         ]
@@ -97,7 +97,7 @@
                 "estBureau": true,
                 "numero": 3,
                 "etage": {
-                    "numero": 1
+                    "numero": 0
                 }
             },
             {
@@ -119,7 +119,7 @@
             {
                 "surface": 200,
                 "estBureau": true,
-                "numero": 6,
+                "numero": 12,
                 "etage": {
                     "numero": 1
                 }
@@ -129,7 +129,7 @@
                 "estBureau": true,
                 "numero": 7,
                 "etage": {
-                    "numero": 2
+                    "numero": 1
                 }
             },
             {
@@ -151,9 +151,12 @@
         ]
     },
     {
-        "nom": "Batiment1",
+        "nom": "Batiment 3",
         "usage": "Usage 3",
         "etages": [
+            {
+                "numero": 0
+            },
             {
                 "numero": 1
             },
@@ -162,9 +165,6 @@
             },
             {
                 "numero": 3
-            },
-            {
-                "numero": 4
             }
         ],
         "pieces": [
@@ -173,7 +173,7 @@
                 "estBureau": true,
                 "numero": 1,
                 "etage": {
-                    "numero": 1
+                    "numero": 0
                 }
             },
             {
@@ -181,7 +181,7 @@
                 "estBureau": true,
                 "numero": 2,
                 "etage": {
-                    "numero": 1
+                    "numero": 0
                 }
             },
             {
@@ -189,7 +189,7 @@
                 "estBureau": true,
                 "numero": 3,
                 "etage": {
-                    "numero": 1
+                    "numero": 0
                 }
             },
             {
@@ -197,7 +197,7 @@
                 "estBureau": true,
                 "numero": 4,
                 "etage": {
-                    "numero": 1
+                    "numero": 0
                 }
             },
             {
@@ -205,7 +205,7 @@
                 "estBureau": true,
                 "numero": 5,
                 "etage": {
-                    "numero": 2
+                    "numero": 1
                 }
             },
             {
@@ -213,7 +213,7 @@
                 "estBureau": true,
                 "numero": 6,
                 "etage": {
-                    "numero": 2
+                    "numero": 1
                 }
             },
             {
@@ -221,7 +221,7 @@
                 "estBureau": true,
                 "numero": 7,
                 "etage": {
-                    "numero": 2
+                    "numero": 1
                 }
             },
             {
@@ -229,7 +229,7 @@
                 "estBureau": true,
                 "numero": 8,
                 "etage": {
-                    "numero": 2
+                    "numero": 1
                 }
             },
             {
@@ -237,7 +237,7 @@
                 "estBureau": true,
                 "numero": 9,
                 "etage": {
-                    "numero": 3
+                    "numero": 2
                 }
             },
             {
@@ -245,7 +245,7 @@
                 "estBureau": true,
                 "numero": 10,
                 "etage": {
-                    "numero": 3
+                    "numero": 2
                 }
             },
             {
@@ -253,7 +253,7 @@
                 "estBureau": true,
                 "numero": 11,
                 "etage": {
-                    "numero": 3
+                    "numero": 2
                 }
             },
             {
@@ -261,7 +261,7 @@
                 "estBureau": true,
                 "numero": 12,
                 "etage": {
-                    "numero": 3
+                    "numero": 2
                 }
             },
             {
@@ -269,7 +269,7 @@
                 "estBureau": true,
                 "numero": 13,
                 "etage": {
-                    "numero": 4
+                    "numero": 3
                 }
             },
             {
@@ -277,7 +277,7 @@
                 "estBureau": true,
                 "numero": 14,
                 "etage": {
-                    "numero": 4
+                    "numero": 3
                 }
             },
             {
@@ -285,13 +285,13 @@
                 "estBureau": true,
                 "numero": 15,
                 "etage": {
-                    "numero": 4
+                    "numero": 3
                 }
             }
         ]
     },
     {
-        "nom": "Batiment 4",
+        "nom": "Batiment 3",
         "usage": "Usage 4",
         "etages": [
             {
@@ -316,7 +316,7 @@
                 "estBureau": true,
                 "numero": 0,
                 "etage": {
-                    "numero": -1
+                    "numero": 0
                 }
             },
             {
@@ -340,7 +340,7 @@
                 "estBureau": true,
                 "numero": 3,
                 "etage": {
-                    "numero": 1
+                    "numero": 0
                 }
             },
             {
@@ -372,7 +372,7 @@
                 "estBureau": true,
                 "numero": 7,
                 "etage": {
-                    "numero": 2
+                    "numero": 1
                 }
             },
             {
@@ -386,7 +386,7 @@
             {
                 "surface": 400,
                 "estBureau": true,
-                "numero": 90,
+                "numero": 9,
                 "etage": {
                     "numero": 2
                 }
@@ -404,7 +404,7 @@
                 "estBureau": true,
                 "numero": 11,
                 "etage": {
-                    "numero": 3
+                    "numero": 2
                 }
             },
             {
@@ -436,7 +436,7 @@
                 "estBureau": true,
                 "numero": 15,
                 "etage": {
-                    "numero": 4
+                    "numero": 3
                 }
             },
             {

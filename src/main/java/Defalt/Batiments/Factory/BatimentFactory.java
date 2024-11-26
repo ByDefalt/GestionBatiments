@@ -12,12 +12,6 @@ import java.util.Objects;
  * avec des options de personnalisation comme la surface des pièces ou le nombre de bureaux.
  */
 public class BatimentFactory {
-    /** Identifiant unique de l'usine. */
-    private int num;
-
-    /** Identifiant statique utilisé pour générer des identifiants uniques pour chaque usine. */
-    private static int id = 0;
-
     /** Nombre d'étages à créer pour un bâtiment. */
     private int nbEtage;
 
@@ -28,34 +22,13 @@ public class BatimentFactory {
     private int nbBatimentsCree;
 
     /**
-     * Constructeur par défaut. Initialise une nouvelle usine avec un identifiant unique.
+     * Constructeur par défaut. Initialise une nouvelle usine.
      */
     public BatimentFactory() {
-        this.num = id;
         this.nbEtage = 0;
         this.nbPiece = 0;
         this.nbBatimentsCree = 0;
-        id++;
     }
-
-    /**
-     * Obtient l'identifiant de cette usine.
-     *
-     * @return L'identifiant unique de l'usine.
-     */
-    public int getNum() {
-        return num;
-    }
-
-    /**
-     * Définit l'identifiant de cette usine.
-     *
-     * @param num L'identifiant unique à attribuer.
-     */
-    public void setNum(int num) {
-        this.num = num;
-    }
-
     /**
      * Obtient le nombre d'étages à créer pour un bâtiment.
      *
@@ -111,48 +84,7 @@ public class BatimentFactory {
     }
 
     /**
-     * Crée un bâtiment avec les paramètres donnés.
-     *
-     * @param nom Le nom du bâtiment.
-     * @param usage L'usage du bâtiment (ex. résidentiel, commercial).
-     * @param surfacePiece La surface de chaque pièce en mètres carrés.
-     * @param startOne Si les numéros d'étage et de pièce commencent à 1 ({@code true}) ou à 0 ({@code false}).
-     * @param nbBureau Le nombre de pièces qui seront des bureaux.
-     * @return Une instance de {@link Batiment}, ou {@code null} si les paramètres sont invalides.
-     */
-    public Batiment createBatiment(String nom, String usage, int surfacePiece, boolean startOne, int nbBureau) {
-        if (nbEtage < 1 || nbPiece < 1 || surfacePiece < 1) return null;
-
-        int nbBureaux = nbBureau;
-        Batiment batiment = new Batiment(nom, usage);
-
-        for (int i = 0; i < nbEtage; i++) {
-            Etage etage = new Etage(startOne ? i + 1 : i);
-            batiment.getEtages().add(etage);
-        }
-
-        int pieceParEtage = (int) Math.ceil((double) nbPiece / nbEtage);
-
-        for (int i = 0; i < nbPiece; i++) {
-            int numeroPiece = i + (startOne ? 1 : 0);
-            int etageIndex = (startOne ? i : i + 1) / pieceParEtage;
-
-            if (etageIndex >= batiment.getEtages().size()) {
-                etageIndex = batiment.getEtages().size() - 1;
-            }
-
-            Etage etage = batiment.getEtages().get(etageIndex);
-            Piece piece = new Piece(surfacePiece, nbBureaux > 0, numeroPiece, etage);
-            batiment.getPieces().add(piece);
-            nbBureaux--;
-        }
-
-        this.nbBatimentsCree++;
-        return batiment;
-    }
-
-    /**
-     * Crée un bâtiment avec des paramètres supplémentaires pour le nombre d'étages et de pièces.
+     * Crée un bâtiment avec des paramètres donées.
      *
      * @param nom Le nom du bâtiment.
      * @param usage L'usage du bâtiment (ex. résidentiel, commercial).
@@ -161,14 +93,14 @@ public class BatimentFactory {
      * @param nbBureau Le nombre de pièces qui seront des bureaux.
      * @param nbEtage Le nombre d'étages du bâtiment.
      * @param nbPiece Le nombre de pièces dans le bâtiment.
-     * @return Une instance de {@link Batiment}, ou {@code null} si les paramètres sont invalides.
+     * @return Une instance de {@link Batiment}.
      */
     public Batiment createBatiment(String nom, String usage, int surfacePiece, boolean startOne, int nbBureau, int nbEtage, int nbPiece) {
         int nbBureaux = nbBureau;
         Batiment batiment = new Batiment(nom, usage);
 
         for (int i = 0; i < nbEtage; i++) {
-            Etage etage = new Etage(startOne ? i + 1 : i);
+            Etage etage = new Etage(i);
             batiment.getEtages().add(etage);
         }
 
@@ -176,11 +108,7 @@ public class BatimentFactory {
 
         for (int i = 0; i < nbPiece; i++) {
             int numeroPiece = i + (startOne ? 1 : 0);
-            int etageIndex = (startOne ? i : i + 1) / pieceParEtage;
-
-            if (etageIndex >= batiment.getEtages().size()) {
-                etageIndex = batiment.getEtages().size() - 1;
-            }
+            int etageIndex = i / pieceParEtage;
 
             Etage etage = batiment.getEtages().get(etageIndex);
             Piece piece = new Piece(surfacePiece, nbBureaux > 0, numeroPiece, etage);
@@ -203,17 +131,7 @@ public class BatimentFactory {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BatimentFactory that = (BatimentFactory) o;
-        return num == that.num && nbEtage == that.nbEtage && nbPiece == that.nbPiece;
-    }
-
-    /**
-     * Génère le code de hachage pour cette usine.
-     *
-     * @return Le code de hachage.
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(num, nbEtage, nbPiece);
+        return nbEtage == that.nbEtage && nbPiece == that.nbPiece && nbBatimentsCree == that.nbBatimentsCree;
     }
 
     /**
@@ -224,7 +142,6 @@ public class BatimentFactory {
     @Override
     public String toString() {
         return "BatimentFactory{" +
-                "num=" + num +
                 ", nbEtage=" + nbEtage +
                 ", nbPiece=" + nbPiece +
                 ", nbBatimentsCree=" + nbBatimentsCree +

@@ -2,18 +2,17 @@ package Defalt.Batiments.BatimentsMetiers;
 
 import Defalt.Batiments.Visiteur.Visitable;
 import Defalt.Batiments.Visiteur.Visiteur;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.scene.control.TreeItem;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Représente un bâtiment avec des informations générales telles que le nom, l'usage, les étages et les pièces.
  * Cette classe est visitable via le pattern Visiteur.
  */
-public class Batiment implements Visitable {
+public class Batiment implements Visitable, Serializable {
 
     /** Nom du bâtiment. */
     private String nom;
@@ -113,6 +112,7 @@ public class Batiment implements Visitable {
      * Méthode acceptant un visiteur, permettant l'application d'une logique sur ce bâtiment
      * et ses composants (étages et pièces).
      * @param visiteur Le visiteur à accepter.
+     * @return Un objet TreeItem représentant le bâtiment.
      */
     @Override
     public TreeItem<String> accept(Visiteur visiteur) {
@@ -130,15 +130,6 @@ public class Batiment implements Visitable {
         if (o == null || getClass() != o.getClass()) return false;
         Batiment batiment = (Batiment) o;
         return nom.equals(batiment.nom);
-    }
-
-    /**
-     * Génère le code de hachage pour ce bâtiment.
-     * @return Le code de hachage.
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(nom, usage, etages, pieces);
     }
 
     /**
