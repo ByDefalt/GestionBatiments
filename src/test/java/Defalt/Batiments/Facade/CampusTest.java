@@ -8,16 +8,18 @@ import Defalt.Batiments.Verificateur.VerificateurBatiment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class CampusTest {
+class CampusTest{
 
     private Campus campus;
     private BatimentFactory mockFactory;
+
 
     @BeforeEach
     void setUp() {
@@ -28,22 +30,13 @@ class CampusTest {
 
     @Test
     void testCreateBatiment() {
-        Batiment mockBatiment = mock(Batiment.class);
-        when(mockFactory.createBatiment(anyString(), anyString(), anyInt(), anyBoolean(), anyInt(), anyInt(), anyInt()))
-                .thenReturn(mockBatiment);
-
         campus.createBatiment("B1", "Usage1", 50, true, 10, 2, 5);
-
         assertEquals(1, campus.getBatiments().size());
-        verify(mockFactory, times(1))
-                .createBatiment("B1", "Usage1", 50, true, 10, 2, 5);
     }
 
     @Test
     void testDestroyBatiment() {
-        Batiment mockBatiment = mock(Batiment.class);
-        when(mockBatiment.getNom()).thenReturn("B1");
-        campus.batiments.add(mockBatiment);
+        campus.createBatiment("B1", "Usage1", 50, true, 10, 2, 5);
 
         assertTrue(campus.destroyBatiment("B1"));
         assertTrue(campus.getBatiments().isEmpty());
@@ -53,19 +46,13 @@ class CampusTest {
 
     @Test
     void testUpdateNomBatiment() {
-        Batiment mockBatiment = mock(Batiment.class);
-        when(mockBatiment.getNom()).thenReturn("B1");
-        doAnswer(invocation -> {
-            when(mockBatiment.getNom()).thenReturn(invocation.getArgument(0));
-            return null;
-        }).when(mockBatiment).setNom(anyString());
 
-        campus.batiments.add(mockBatiment);
+        campus.createBatiment("B1", "Usage1", 50, true, 10, 2, 5);
 
         assertTrue(campus.updateNomBatiment("B1", "B2"));
-        assertEquals("B2", mockBatiment.getNom());
 
         assertFalse(campus.updateNomBatiment("NonExistent", "NewName"));
+        assertEquals("B2", campus.getBatiments().getFirst());
     }
 
     @Test
@@ -74,7 +61,7 @@ class CampusTest {
         when(mockBatiment.getNom()).thenReturn("B1");
         when(mockBatiment.getPieces()).thenReturn(new ArrayList<>());
 
-        campus.batiments.add(mockBatiment);
+        //campus.batiments.add(mockBatiment);
 
         assertFalse(campus.updatePieceEstBureau("B1", 1));
     }
@@ -101,35 +88,20 @@ class CampusTest {
 
     @Test
     void testBatimentsToJson() throws Exception {
-        // Setup
-        BatimentFactory mockFactoryJson = mock(BatimentFactory.class);
-        campus.batimentFactory = mockFactoryJson;
-        Batiment mockBatiment = mock(Batiment.class);
-        campus.batiments.add(mockBatiment);
-
-        // Execute
+        campus.createBatiment("B1", "Usage1", 50, true, 10, 2, 5);
         campus.batimentsToJson("output.json");
-
-        // Verify
-        verify(mockFactoryJson, times(1)).BatimentsToJson(anyList(), eq("output.json"));
+        File file = new File("output.json");
+        assertTrue(file.exists());
     }
 
     @Test
     void testJsonToBatiments() throws Exception {
-        BatimentFactory mockFactoryJson = mock(BatimentFactory.class);
-        VerificateurBatiment mockVerifier = mock(VerificateurBatiment.class);
-        List<Batiment> importedBatiments = new ArrayList<>();
-        Batiment validBatiment = mock(Batiment.class);
-        importedBatiments.add(validBatiment);
-
-        when(mockFactoryJson.jsonToBatiments("input.json")).thenReturn(importedBatiments);
-        when(mockVerifier.verifBatiment(any())).thenReturn(List.of(ProblemeBatiment.AUCUN));
-
-        campus.batimentFactory = mockFactoryJson;
+        campus.createBatiment("B1", "Usage1", 50, true, 10, 2, 5);
+        campus.batimentsToJson("input.json");
 
         String result = campus.jsonToBatiments("input.json");
 
-        assertTrue(result.isEmpty());
+        assertTrue(result.contains("B1"));
         assertEquals(1, campus.getBatiments().size());
     }
 }

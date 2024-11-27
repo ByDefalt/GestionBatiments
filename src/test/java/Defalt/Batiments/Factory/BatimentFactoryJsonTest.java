@@ -78,6 +78,22 @@ class BatimentFactoryJsonTest {
             fail("La méthode jsonToBatiments a levé une exception : " + e.getMessage());
         }
     }
+    @Test
+    void testJsonToBatimentsFail() {
+        try {
+
+            // Désérialisation à partir du fichier
+            List<Batiment> batimentsDeserialises = batimentFactoryJson.jsonToBatiments("test_batiments_mauvais.json");
+
+            // Vérification des données désérialisées
+            assertNotNull(batimentsDeserialises, "La liste désérialisée est null.");
+            assertEquals(batiments.size(), batimentsDeserialises.size()-2, "Le nombre de bâtiments désérialisés est incorrect.");
+            assertNotEquals(batiments.get(0).getNom(), batimentsDeserialises.get(0).getNom(), "Le nom du premier bâtiment est incorrect.");
+            assertNotEquals(batiments.get(1).getUsage(), batimentsDeserialises.get(1).getUsage(), "L'usage du deuxième bâtiment est incorrect.");
+        } catch (Exception e) {
+            fail("La méthode jsonToBatiments a levé une exception : " + e.getMessage());
+        }
+    }
 
     @Test
     void testJsonToBatimentsFichierInexistant() {
