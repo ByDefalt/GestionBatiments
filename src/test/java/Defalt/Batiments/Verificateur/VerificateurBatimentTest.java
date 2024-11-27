@@ -13,101 +13,105 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class VerificateurBatimentTest {
 
-    private VerificateurBatiment verificateur;
-    private Batiment batiment;
+	private VerificateurBatiment verificateur;
+	private Batiment batiment;
 
-    @BeforeEach
-    void setUp() {
-        verificateur = new VerificateurBatiment();
+	@BeforeEach
+	void setUp() {
+		verificateur = new VerificateurBatiment();
 
-        // Créer un bâtiment avec des attributs valides pour les tests
-        batiment = new Batiment();
-        batiment.setNom("Bâtiment A");
-        batiment.setUsage("Bureau");
+		// Créer un bâtiment avec des attributs valides pour les tests
+		batiment = new Batiment();
+		batiment.setNom("Bâtiment A");
+		batiment.setUsage("Bureau");
 
-        LinkedList<Etage> etages = new LinkedList<>();
-        etages.add(new Etage(0));
-        etages.add(new Etage(1));
-        batiment.setEtages(etages);
+		LinkedList<Etage> etages = new LinkedList<>();
+		etages.add(new Etage(0));
+		etages.add(new Etage(1));
+		batiment.setEtages(etages);
 
-        LinkedList<Piece> pieces = new LinkedList<>();
-        pieces.add(new Piece(20, true, 1, etages.get(0)));
-        pieces.add(new Piece(30, false, 2, etages.get(1)));
-        batiment.setPieces(pieces);
-    }
+		LinkedList<Piece> pieces = new LinkedList<>();
+		pieces.add(new Piece(20, true, 1, etages.get(0)));
+		pieces.add(new Piece(30, false, 2, etages.get(1)));
+		batiment.setPieces(pieces);
+	}
 
-    @Test
-    void testBatimentNull() {
-        List<ProblemeBatiment> problemes = verificateur.verifBatiment(null);
-        assertEquals(1, problemes.size(), "Un bâtiment null devrait produire un seul problème.");
-        assertTrue(problemes.contains(ProblemeBatiment.NULLBATIMENT), "Le problème attendu est NULLBATIMENT.");
-    }
+	@Test
+	void testBatimentNull() {
+		List<ProblemeBatiment> problemes = verificateur.verifBatiment(null);
+		assertEquals(1, problemes.size(), "Un bâtiment null devrait produire un seul problème.");
+		assertTrue(problemes.contains(ProblemeBatiment.NULLBATIMENT), "Le problème attendu est NULLBATIMENT.");
+	}
 
-    @Test
-    void testNomUsageInvalides() {
-        batiment.setNom("");
-        batiment.setUsage("");
+	@Test
+	void testNomUsageInvalides() {
+		batiment.setNom("");
+		batiment.setUsage("");
 
-        List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
-        assertTrue(problemes.contains(ProblemeBatiment.NOM), "Le problème attendu est NOM.");
-        assertTrue(problemes.contains(ProblemeBatiment.USAGE), "Le problème attendu est USAGE.");
-    }
+		List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
+		assertTrue(problemes.contains(ProblemeBatiment.NOM), "Le problème attendu est NOM.");
+		assertTrue(problemes.contains(ProblemeBatiment.USAGE), "Le problème attendu est USAGE.");
+	}
 
-    @Test
-    void testEtageNull() {
-        batiment.getEtages().add(null);
+	@Test
+	void testEtageNull() {
+		batiment.getEtages().add(null);
 
-        List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
-        assertTrue(problemes.contains(ProblemeBatiment.NULLETAGE), "Le problème attendu est NULLETAGE.");
-    }
+		List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
+		assertTrue(problemes.contains(ProblemeBatiment.NULLETAGE), "Le problème attendu est NULLETAGE.");
+	}
 
-    @Test
-    void testPieceNull() {
-        batiment.getPieces().add(null);
+	@Test
+	void testPieceNull() {
+		batiment.getPieces().add(null);
 
-        List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
-        assertTrue(problemes.contains(ProblemeBatiment.NULLEPIECE), "Le problème attendu est NULLEPIECE.");
-    }
+		List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
+		assertTrue(problemes.contains(ProblemeBatiment.NULLEPIECE), "Le problème attendu est NULLEPIECE.");
+	}
 
-    @Test
-    void testNumeroEtageIncorrect() {
-        batiment.getEtages().add(1, new Etage(3)); // Ajouter un étage avec un numéro incorrect
+	@Test
+	void testNumeroEtageIncorrect() {
+		batiment.getEtages().add(1, new Etage(3)); // Ajouter un étage avec un numéro incorrect
 
-        List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
-        assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.ETAGES), "Le problème attendu est ETAGES.");
-    }
+		List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
+		assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.ETAGES), "Le problème attendu est ETAGES.");
+	}
 
-    @Test
-    void testNumeroPieceIncorrect() {
-        batiment.getPieces().add(1, new Piece(15, false, 5, batiment.getEtages().get(0))); // Ajouter une pièce avec un numéro incorrect
+	@Test
+	void testNumeroPieceIncorrect() {
+		batiment.getPieces().add(1, new Piece(15, false, 5, batiment.getEtages().get(0))); // Ajouter une pièce avec un
+																							// numéro incorrect
 
-        List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
-        assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.PIECES), "Le problème attendu est PIECES.");
-    }
-    @Test
-    void testAllInvalid(){
-        batiment.setNom("");
-        batiment.setUsage("");
-        batiment.getEtages().add(null);
-        batiment.getPieces().add(null);
-        batiment.getEtages().add(1, new Etage(3));
-        batiment.getPieces().add(1, new Piece(15, false, 5, batiment.getEtages().get(0)));
+		List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
+		assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.PIECES), "Le problème attendu est PIECES.");
+	}
 
-        List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
-        assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.NOM), "Le problème attendu est NOM.");
-        assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.USAGE), "Le problème attendu est USAGE.");
-        assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.NULLETAGE), "Le problème attendu est NULLETAGE.");
-        assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.NULLEPIECE), "Le problème attendu est NULLEPIECE.");
-        assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.ETAGES), "Le problème attendu est ETAGES.");
-        assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.PIECES), "Le problème attendu est PIECES.");
-    }
+	@Test
+	void testAllInvalid() {
+		batiment.setNom("");
+		batiment.setUsage("");
+		batiment.getEtages().add(null);
+		batiment.getPieces().add(null);
+		batiment.getEtages().add(1, new Etage(3));
+		batiment.getPieces().add(1, new Piece(15, false, 5, batiment.getEtages().get(0)));
 
-    @Test
-    void testBatimentValide() {
-        List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
+		List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
+		assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.NOM), "Le problème attendu est NOM.");
+		assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.USAGE), "Le problème attendu est USAGE.");
+		assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.NULLETAGE),
+				"Le problème attendu est NULLETAGE.");
+		assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.NULLEPIECE),
+				"Le problème attendu est NULLEPIECE.");
+		assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.ETAGES), "Le problème attendu est ETAGES.");
+		assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.PIECES), "Le problème attendu est PIECES.");
+	}
 
-        assertEquals(1, problemes.size(), "Un bâtiment valide devrait produire un seul problème (AUCUN).");
-        assertTrue(problemes.contains(ProblemeBatiment.AUCUN), "Le problème attendu est AUCUN.");
-    }
+	@Test
+	void testBatimentValide() {
+		List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
+
+		assertEquals(1, problemes.size(), "Un bâtiment valide devrait produire un seul problème (AUCUN).");
+		assertTrue(problemes.contains(ProblemeBatiment.AUCUN), "Le problème attendu est AUCUN.");
+	}
 
 }
