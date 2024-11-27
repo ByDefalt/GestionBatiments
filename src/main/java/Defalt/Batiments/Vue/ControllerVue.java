@@ -8,6 +8,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe principale contrôlant la vue de l'application.
@@ -26,6 +28,8 @@ public class ControllerVue extends Application {
      */
     private Campus campus;
 
+    private List<VueBatiment> listVueBatiments;
+
     /**
      * Point d'entrée de l'application JavaFX.
      * Initialise le modèle et affiche la vue principale de la liste des bâtiments.
@@ -36,6 +40,7 @@ public class ControllerVue extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.campus = new Campus();
+        this.listVueBatiments=new ArrayList<>();
         campus.createBatiment("Batiment 1", "Bat",10,true,10,10, 101);
         campus.createBatiment("Batiment 2", "Bat",10,false,10,10, 101);
         ouvertureVueListeBatiments(primaryStage);
@@ -78,7 +83,22 @@ public class ControllerVue extends Application {
     public void ouvertureVueBatiment(String nomBatiment) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("details_batiment.fxml"));
 
-        VueBatiment vueBatiment = new VueBatiment(campus, nomBatiment);
+        boolean vueExist=listVueBatiments.stream()
+                .map(VueBatiment::getNomBatiment)
+                .toList()
+                .contains(nomBatiment);
+        VueBatiment vueBatiment;
+        if(vueExist){
+            vueBatiment=listVueBatiments.stream()
+                    .filter(vb->vb.getNomBatiment().equals(nomBatiment))
+                    .findFirst()
+                    .orElse(null);
+        }else{
+            vueBatiment = new VueBatiment(campus, nomBatiment);
+            listVueBatiments.add(vueBatiment);
+        }
+
+
         loader.setController(vueBatiment);
 
         try {

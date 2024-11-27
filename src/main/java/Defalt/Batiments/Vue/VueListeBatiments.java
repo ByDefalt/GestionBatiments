@@ -4,6 +4,7 @@ import Defalt.Batiments.Facade.Campus;
 import Defalt.Batiments.Observer.Observer;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import javafx.collections.FXCollections;
@@ -119,7 +120,7 @@ public class VueListeBatiments implements Observer {
     public void openFormWindow() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("interface_archi_form_add_batiment.fxml"));
-            loader.setController(this); // Réutiliser le même contrôleur
+            loader.setController(this);
             Parent formRoot = loader.load();
             if(formStageAddBatiment != null && formStageAddBatiment.isShowing()){
                 formStageAddBatiment.close();
@@ -232,6 +233,49 @@ public class VueListeBatiments implements Observer {
 
         try {
             String res = campus.jsonToBatiments(selectedFile.getAbsolutePath());
+            if (!res.isEmpty()) {
+                showError("Erreur", "Erreur certain Batiments son incorrecte : \nLes Etages et Pieces doivent etre dans l'ordre en commencant par\n 0 ou 1 (pour les Pieces)\n 0 (pour les Etages)", res);
+            }
+            campus.notifyObservers();
+        } catch (Exception e) {
+            showError("Erreur", "Erreur", "Erreur lors de la lecture du fichier");
+        }
+    }
+    public void serializeBatiments() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Enregistrer le fichier");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Fichiers save", "*.save"));
+
+        Stage stage = (Stage) listViewBatiments.getScene().getWindow();
+        File selectedFile = fileChooser.showSaveDialog(stage);
+
+        if (selectedFile == null) {
+            showError("Erreur", "Erreur", "Aucun emplacement sélectionné");
+            return;
+        }
+
+        try {
+            String filePath = selectedFile.getAbsolutePath();
+            campus.serializeBatiments(filePath);
+            campus.notifyObservers();
+        } catch (Exception e) {
+            showError("Erreur", "Erreur", "Erreur lors de l'enregistrement du fichier");
+        }
+    }
+
+    public void deserializeBatiments(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Sélectionner un fichier");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Fichiers save", "*.save"));
+        Stage stage = (Stage) listViewBatiments.getScene().getWindow();
+        File selectedFile = fileChooser.showOpenDialog(stage);
+        if (selectedFile == null) {
+            showError("Erreur", "Erreur", "Aucun fichier sélectionné");
+            return;
+        }
+
+        try {
+            String res = campus.deserializeBatiments(selectedFile.getAbsolutePath());
             if (!res.isEmpty()) {
                 showError("Erreur", "Erreur certain Batiments son incorrecte : \nLes Etages et Pieces doivent etre dans l'ordre en commencant par\n 0 ou 1 (pour les Pieces)\n 0 (pour les Etages)", res);
             }

@@ -1,6 +1,7 @@
 package Defalt.Batiments.Facade;
 
 import Defalt.Batiments.BatimentsMetiers.Batiment;
+import Defalt.Batiments.DAO.BatimentDAO;
 import Defalt.Batiments.Factory.BatimentFactory;
 import Defalt.Batiments.Factory.BatimentFactoryJson;
 import Defalt.Batiments.Observer.Observable;
@@ -235,6 +236,34 @@ public class Campus implements Observable {
                 return null;
             }
             return batiment.accept(visiteur);
+    }
+
+    public void serializeBatiments(String fileName) {
+        BatimentDAO myDao=new BatimentDAO();
+        myDao.serializeBatiments(this.batiments,fileName);
+    }
+    public String deserializeBatiments(String fileName) {
+        BatimentDAO myDao=new BatimentDAO();
+        List<Batiment> batimentsImported = myDao.deserializeBatiments(fileName);
+
+        VerificateurBatiment verifier = new VerificateurBatiment();
+        StringBuilder res = new StringBuilder();
+        int numeroBatiment=1;
+        for(Batiment batiment:batimentsImported){
+            List<ProblemeBatiment> listProbleme=verifier.verifBatiment(batiment);
+            if (batiments.contains(batiment)) {
+                listProbleme.add(ProblemeBatiment.NOMINLISTE);
+                listProbleme.remove(ProblemeBatiment.AUCUN);
+            }
+            if (listProbleme.contains(ProblemeBatiment.AUCUN)) {
+                batiments.add(batiment);
+                notifyObservers();
+            }else{
+                res.append(checkError(listProbleme, batiment, numeroBatiment));
+            }
+            numeroBatiment++;
+        }
+        return res.toString();
     }
     /**
      * Ajoute un nouvel observateur à la liste des observateurs de la classe.

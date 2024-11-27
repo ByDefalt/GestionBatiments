@@ -51,9 +51,9 @@
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#jsonToBatiments" text="Charger Batiments" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Save" />
+              <MenuItem mnemonicParsing="false" onAction="#serializeBatiments" text="Save" />
+            <MenuItem mnemonicParsing="false" onAction="#deserializeBatiments" text="Load (.save)" />
+              <MenuItem mnemonicParsing="false" onAction="#jsonToBatiments" text="Load (.json)" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#fermerFenetreMain" text="Quit" />
           </items>

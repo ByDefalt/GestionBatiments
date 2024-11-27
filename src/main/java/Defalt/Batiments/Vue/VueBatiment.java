@@ -28,6 +28,11 @@ import java.util.regex.Pattern;
  */
 public class VueBatiment implements Observer {
     private Campus campus;
+
+    public String getNomBatiment() {
+        return nomBatiment;
+    }
+
     private String nomBatiment;
     private Visiteur visiteur;
 
@@ -118,6 +123,7 @@ public class VueBatiment implements Observer {
         }
         campus.updateNomBatiment(nomBatiment, textFieldRenameBatiment.getText());
         this.nomBatiment = textFieldRenameBatiment.getText();
+
         campus.notifyObservers();
         renameStage.close();
     }
