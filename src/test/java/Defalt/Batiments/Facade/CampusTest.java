@@ -1,14 +1,16 @@
 package Defalt.Batiments.Facade;
 
 import Defalt.Batiments.BatimentsMetiers.Batiment;
+import Defalt.Batiments.DAO.BatimentDAO;
 import Defalt.Batiments.Factory.BatimentFactory;
 import Defalt.Batiments.Observer.Observer;
-import Defalt.Batiments.Verificateur.ProblemeBatiment;
-import Defalt.Batiments.Verificateur.VerificateurBatiment;
+import Defalt.Batiments.Visiteur.VisiteurTypePiece;
+import javafx.scene.control.TreeItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +26,6 @@ class CampusTest{
     @BeforeEach
     void setUp() {
         campus = new Campus();
-        mockFactory = mock(BatimentFactory.class);
-        BatimentFactory bf = mockFactory;
     }
 
     @Test
@@ -57,13 +57,9 @@ class CampusTest{
 
     @Test
     void testUpdatePieceEstBureau() {
-        Batiment mockBatiment = mock(Batiment.class);
-        when(mockBatiment.getNom()).thenReturn("B1");
-        when(mockBatiment.getPieces()).thenReturn(new ArrayList<>());
+        campus.createBatiment("B1", "Usage1", 50, true, 10, 2, 5);
 
-        //campus.batiments.add(mockBatiment);
-
-        assertFalse(campus.updatePieceEstBureau("B1", 1));
+        assertTrue(campus.updatePieceEstBureau("B1", 1));
     }
 
     @Test
@@ -103,5 +99,49 @@ class CampusTest{
 
         assertTrue(result.contains("B1"));
         assertEquals(1, campus.getBatiments().size());
+    }
+    @Test
+    void testJsonToBatimentsFail() throws Exception {
+
+        String result = campus.jsonToBatiments("test_batiments_mauvais.json");
+        assertFalse(result.isEmpty());
+        assertEquals(1, campus.getBatiments().size());
+    }
+
+    @Test
+    void afficherDetailsBatiment() {
+        campus.createBatiment("B1", "Usage1", 50, true, 10, 2, 5);
+        assertEquals(new TreeItem<>("Bâtiment : B1").getValue(), campus.afficherDetailsBatiment("B1",new VisiteurTypePiece()).getValue());
+    }
+    @Test
+    public void serializeBatiments() throws IOException {
+        campus.createBatiment("B1", "Usage1", 50, true, 10, 2, 5);
+        campus.createBatiment("B2", "Usage2", 50, true, 10, 2, 5);
+        campus.createBatiment("B3", "Usage3", 50, true, 10, 2, 5);
+        campus.serializeBatiments("test_serialize.save");
+        File file = new File("test_serialize.save");
+        assertTrue(file.exists());
+    }
+    @Test
+    public void deserializeBatiments() throws IOException, ClassNotFoundException {
+        campus.createBatiment("B1", "Usage1", 50, true, 10, 2, 5);
+        campus.createBatiment("B2", "Usage2", 50, true, 10, 2, 5);
+        campus.createBatiment("B3", "Usage3", 50, true, 10, 2, 5);
+        campus.serializeBatiments("test_serialize.save");
+        File file = new File("test_serialize.save");
+        assertTrue(file.exists());
+        String pb=campus.deserializeBatiments("test_serialize.save");
+        assertEquals("Le batiment 'B1' a les problèmes suivants :\n" +
+                "    Le nom batiment existe déja\n" +
+                "Le batiment 'B2' a les problèmes suivants :\n" +
+                "    Le nom batiment existe déja\n" +
+                "Le batiment 'B3' a les problèmes suivants :\n" +
+                "    Le nom batiment existe déja\n",pb);
+        campus.destroyBatiment("B1");
+        campus.destroyBatiment("B2");
+        campus.destroyBatiment("B3");
+        String pb2=campus.deserializeBatiments("test_serialize.save");
+        assertEquals("",pb2);
+        assertEquals(3, campus.getBatiments().size());
     }
 }

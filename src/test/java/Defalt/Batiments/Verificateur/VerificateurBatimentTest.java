@@ -84,6 +84,23 @@ class VerificateurBatimentTest {
         List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
         assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.PIECES), "Le problème attendu est PIECES.");
     }
+    @Test
+    void testAllInvalid(){
+        batiment.setNom("");
+        batiment.setUsage("");
+        batiment.getEtages().add(null);
+        batiment.getPieces().add(null);
+        batiment.getEtages().add(1, new Etage(3));
+        batiment.getPieces().add(1, new Piece(15, false, 5, batiment.getEtages().get(0)));
+
+        List<ProblemeBatiment> problemes = verificateur.verifBatiment(batiment);
+        assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.NOM), "Le problème attendu est NOM.");
+        assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.USAGE), "Le problème attendu est USAGE.");
+        assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.NULLETAGE), "Le problème attendu est NULLETAGE.");
+        assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.NULLEPIECE), "Le problème attendu est NULLEPIECE.");
+        assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.ETAGES), "Le problème attendu est ETAGES.");
+        assertTrue(problemes.stream().anyMatch(p -> p == ProblemeBatiment.PIECES), "Le problème attendu est PIECES.");
+    }
 
     @Test
     void testBatimentValide() {
@@ -92,4 +109,5 @@ class VerificateurBatimentTest {
         assertEquals(1, problemes.size(), "Un bâtiment valide devrait produire un seul problème (AUCUN).");
         assertTrue(problemes.contains(ProblemeBatiment.AUCUN), "Le problème attendu est AUCUN.");
     }
+
 }

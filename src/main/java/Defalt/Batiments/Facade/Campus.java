@@ -238,11 +238,11 @@ public class Campus implements Observable {
             return batiment.accept(visiteur);
     }
 
-    public void serializeBatiments(String fileName) {
+    public void serializeBatiments(String fileName) throws IOException {
         BatimentDAO myDao=new BatimentDAO();
         myDao.serializeBatiments(this.batiments,fileName);
     }
-    public String deserializeBatiments(String fileName) {
+    public String deserializeBatiments(String fileName) throws IOException, ClassNotFoundException {
         BatimentDAO myDao=new BatimentDAO();
         List<Batiment> batimentsImported = myDao.deserializeBatiments(fileName);
 

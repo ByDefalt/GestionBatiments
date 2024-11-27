@@ -1,9 +1,6 @@
 package Defalt;
 
-import Defalt.Batiments.BatimentsMetiers.Batiment;
-import Defalt.Batiments.DAO.BatimentDAO;
 import Defalt.Batiments.Facade.Campus;
-import Defalt.Batiments.Factory.BatimentFactory;
 import Defalt.Batiments.Visiteur.VisiteurTypePiece;
 import javafx.scene.control.TreeItem;
 
