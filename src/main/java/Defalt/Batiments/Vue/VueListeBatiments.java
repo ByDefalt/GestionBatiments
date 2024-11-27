@@ -58,7 +58,11 @@ public class VueListeBatiments implements Observer {
     private ListView listViewBatiments;
 
 
-
+    /**
+     * Retourne la liste des bâtiments affichée dans l'interface utilisateur.
+     *
+     * @return la liste des bâtiments.
+     */
     public ListView getListViewBatiments() {
         return listViewBatiments;
     }
@@ -69,7 +73,11 @@ public class VueListeBatiments implements Observer {
     private MenuItem menuItemAfficherDetailsBatiment;
 
 
-
+    /**
+     * Retourne le menu permettant d'afficher les détails d'un bâtiment.
+     *
+     * @return le menu pour afficher les détails d'un bâtiment.
+     */
     public MenuItem getMenuItemAfficherDetailsBatiment() {
         return menuItemAfficherDetailsBatiment;
     }
@@ -218,7 +226,7 @@ public class VueListeBatiments implements Observer {
     }
 
     /**
-     * Ouvre une boîte de dialogue pour importer un fichier JSON et charger les bâtiments depuis ce fichier.
+     * Ouvre une boîte de dialogue pour importer un fichier JSON et charger les bâtiments depuis ce fichier et affiche les erreurs eventuel.
      */
     public void jsonToBatiments() {
         FileChooser fileChooser = new FileChooser();
@@ -241,6 +249,11 @@ public class VueListeBatiments implements Observer {
             showError("Erreur", "Erreur", "Erreur lors de la lecture du fichier");
         }
     }
+
+
+    /**
+     * Ouvre une boîte de dialogue pour exporter les bâtiments dans un fichier .save.
+     */
     public void serializeBatiments() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Enregistrer le fichier");
@@ -262,7 +275,9 @@ public class VueListeBatiments implements Observer {
             showError("Erreur", "Erreur", "Erreur lors de l'enregistrement du fichier");
         }
     }
-
+    /**
+     * Ouvre une boîte de dialogue pour importer un fichier .save et charger les bâtiments depuis ce fichier et affiche les erreurs eventuel.
+     */
     public void deserializeBatiments(){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Sélectionner un fichier");

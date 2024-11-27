@@ -237,11 +237,24 @@ public class Campus implements Observable {
             }
             return batiment.accept(visiteur);
     }
-
+    /**
+     * Sérialise la liste actuelle des bâtiments dans un fichier.
+     *
+     * @param fileName le nom du fichier dans lequel les bâtiments seront sérialisés.
+     * @throws IOException si une erreur d'entrée/sortie survient lors de la sérialisation.
+     */
     public void serializeBatiments(String fileName) throws IOException {
         BatimentDAO myDao=new BatimentDAO();
         myDao.serializeBatiments(this.batiments,fileName);
     }
+    /**
+     * Désérialise une liste de bâtiments depuis un fichier et traite les éventuels problèmes associés.
+     *
+     * @param fileName le nom du fichier contenant les bâtiments sérialisés.
+     * @return une chaîne de caractères contenant les erreurs rencontrées pour chaque bâtiment.
+     * @throws IOException            si une erreur d'entrée/sortie survient lors de la désérialisation.
+     * @throws ClassNotFoundException si la classe des objets sérialisés n'est pas trouvée.
+     */
     public String deserializeBatiments(String fileName) throws IOException, ClassNotFoundException {
         BatimentDAO myDao=new BatimentDAO();
         List<Batiment> batimentsImported = myDao.deserializeBatiments(fileName);
