@@ -137,6 +137,7 @@ public class VueBatiment implements Observer {
             if (treeView.getRoot().getChildren() != null) {
                 if (treeView.getSelectionModel().getSelectedItem() != null) {
                     String selectedItem = treeView.getSelectionModel().getSelectedItem().getValue();
+                    System.out.println(selectedItem);
                     Pattern pattern = Pattern.compile("(Pièce|Bureau)\\s*n°(\\d+)");
                     Matcher matcher = pattern.matcher(selectedItem);
                     if (matcher.find()) {

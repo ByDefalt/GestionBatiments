@@ -89,10 +89,7 @@ public class ControllerVue extends Application {
                 .contains(nomBatiment);
         VueBatiment vueBatiment;
         if(vueExist){
-            vueBatiment=listVueBatiments.stream()
-                    .filter(vb->vb.getNomBatiment().equals(nomBatiment))
-                    .findFirst()
-                    .orElse(null);
+            return;
         }else{
             vueBatiment = new VueBatiment(campus, nomBatiment);
             listVueBatiments.add(vueBatiment);
@@ -104,7 +101,10 @@ public class ControllerVue extends Application {
         try {
             Parent root = loader.load();
             Stage newStage = new Stage();
-            newStage.setOnCloseRequest(event -> campus.removeObserver(vueBatiment));
+            newStage.setOnCloseRequest(event ->{
+                campus.removeObserver(vueBatiment);
+                listVueBatiments.remove(vueBatiment);
+            });
             newStage.setTitle("Détails Bâtiment");
             newStage.setScene(new Scene(root));
             newStage.show();
